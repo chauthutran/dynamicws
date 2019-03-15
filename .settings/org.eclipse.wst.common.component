@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="eReferralsApp">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="commons-lang3-3.4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/commons-lang3-3.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="json-20140107.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-20140107.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="twilio-7.9.1-jar-with-dependencies.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/twilio-7.9.1-jar-with-dependencies.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="json-simple-1.1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-simple-1.1.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="org.apache.commons.io.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/org.apache.commons.io.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="/eReferralsApp/build/classes"/>
+        <property name="context-root" value="eReferralsApp"/>
+    </wb-module>
+</project-modules>
