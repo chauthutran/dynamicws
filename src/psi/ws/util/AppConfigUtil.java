@@ -16,10 +16,10 @@ public class AppConfigUtil
     // Getting username / password to access server from config.json file
     // -------------------------------------------------------------------------
 
-    public static JSONObject readConfigFile( ServletContext serverContext )
+    public static JSONObject readConfigFile( String fileName, ServletContext serverContext )
         throws ServletException
     {
-        JSONObject configJson = AppConfigUtil.jsonConfigLoad( "config.json", serverContext );
+        JSONObject configJson = AppConfigUtil.jsonConfigLoad( fileName, serverContext );
         return configJson;
     }
 

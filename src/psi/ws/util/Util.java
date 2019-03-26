@@ -35,6 +35,14 @@ public final class Util
     public static final String ENCODING_UTF8 = "UTF-8";
     public static final int REQUEST_TIMEOUT = 240000; // 4 min;
     
+    public static final String CONFIG_FILE_COMMON_DATE = "config.json";
+    public static final String CONFIG_FILE_ACTION_DATA = "config_actions.json";
+    
+    public static final String ACTION_TYPE_ISSUEVOUCHER = "issueVoucherAction";
+
+    public static final String ACTION_ID_PAYLOAD = "PAYLOAD";
+    
+    
     public static final String REQUEST_CONTENT_TYPE_DHIS = "DHIS";
     public static final String REQUEST_CONTENT_TYPE_FOCUSONE = "FOCUSONE";
     public static final String REQUEST_CONTENT_TYPE_LOCAL_SMS_JSON = "LOCAL_SMS_JSON";
@@ -50,6 +58,7 @@ public final class Util
     public static String ACCESS_SERVER_PASSWORD_PROFILER = "";
 
     
+    public static String REQUEST_ACTION_TYPE_ERROR = "Error";
     public static String REQUEST_ACTION_TYPE_DHIS = "DhisApi";
     public static String REQUESTION_DHIS_ACTION_ID_REQUESTCUSTOM = "RequestCustom";
     public static String REQUESTION_DHIS_ACTION_ID_CLIENTGET = "ClientGet";
@@ -91,6 +100,7 @@ public final class Util
 
             String errMsg = "SendRequest, responseCode: " + dataStore.responseCode + ", Msg: " + ex.getMessage();
             Util.outputErr( "" + errMsg );
+            dataStore.outMessage = ex.getMessage();
 
             // dataStore.output = errMsg; // This should be obsolete later once
             // all are organized.
@@ -109,9 +119,12 @@ public final class Util
     {
         try
         {
-            System.out.println("\n === requestUrl : " + url );    
+            System.out.println("\n === requestUrl : " + url );
             
-            dataStore.data = jsonData;
+            if( jsonData != null )
+            {
+                dataStore.data = jsonData;
+            }
             // dataStore.sendStr = bodyMessage;
 
             // 2. Open HttpsURLConnection and Set Request Type.
@@ -195,7 +208,6 @@ public final class Util
                     }
                     else if ( requestType.equals( Util.REQUEST_TYPE_POST ) )
                     {
-
                         // Need to make sure of this.. TEsting...
                         StringBuilder postData = new StringBuilder();
                         for ( Map.Entry<String, Object> param : params.entrySet() )
@@ -244,7 +256,7 @@ public final class Util
             {
                 // 5. Message content retrieve
                 // if ( dataStore.responseCode == HttpURLConnection.HTTP_OK )
-                if ( dataStore.responseCode < 400 )
+                if ( dataStore.responseCode <= 400 )
                 {
                     dataStore.output = readInputStream( con.getInputStream() );
                 }

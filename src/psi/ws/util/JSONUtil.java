@@ -1,5 +1,9 @@
 package psi.ws.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -7,6 +11,54 @@ import org.json.JSONObject;
 
 public class JSONUtil
 {
+    public static JSONObject convertJSONData( String jsonStr )
+    {
+        JSONObject result = new JSONObject();
+        
+        try
+        {
+            JSONObject jsonData = new JSONObject( jsonStr.trim() );
+            
+            result.put( "status", "SUCCESS" );
+            result.put(  "data", jsonData );
+            
+        }
+        catch( Exception ex )
+        {
+            result.put( "status", "ERROR" );
+            result.put(  "errorMsg", ex.getMessage() );
+            result.put(  "data", JSONObject.NULL );
+        }
+        
+        return result;
+    }
+    
+    // Convert InputStream to String
+    public static JSONObject getJsonFromInputStream( InputStream is ) throws Exception
+    {
+            JSONObject jsonData = new JSONObject(); // Default blank Json
+             
+            try 
+            { 
+                    String contentStr = readInputStream( is );
+                     
+                    if ( !contentStr.isEmpty() )
+                    {
+                            jsonData = new JSONObject( contentStr );                                        
+                    }
+            } 
+            catch (IOException e) 
+            {
+                    Util.outputErr( "Failed on getJsonFromInputStream" );
+                    e.printStackTrace();
+                    throw e;
+            } 
+                            
+    return jsonData;
+    }
+    
+    // 
+    
     public static String getJSONStrVal( JSONObject jsonDataInput, String key )
     {
         String output = "";
@@ -166,8 +218,6 @@ public class JSONUtil
         return propJson;
     }
     
-
-
     public static JSONArray getJSONArraySubArr( JSONArray jsonList, Integer startIndex, Integer endIndex )
     {
         JSONArray newList = new JSONArray();
@@ -206,8 +256,8 @@ public class JSONUtil
     }
     
     
-    // --------------------------------------------------
-    // ---- Merge Related -----------------------------
+    // -------------------------------------------------------------------------
+    // Merge Related
 
     // if already on target (the string value), it does not move from source..
     public static void jsonMerge( JSONObject source, JSONObject target )
@@ -277,20 +327,40 @@ public class JSONUtil
             }
         }
     }
-    
+
     public static String jsonToStr( JSONObject dataJson )
     {
-            String output = "";
+        String output = "";
+
+        try
+        {
+            if ( dataJson != null )
+                output = dataJson.toString();
+        }
+        catch ( Exception ex )
+        {
+            Util.outputErr( "Error in Util.jsonToStr: " + ex.getMessage() );
+        }
+
+        return output;
+    }
+    
+    private static String readInputStream( InputStream stream ) throws Exception 
+    {
+            StringBuilder builder = new StringBuilder();
+        
+            try ( BufferedReader in = new BufferedReader( new InputStreamReader( stream, Util.ENCODING_UTF8 ) ) ) {
+
+                    String line;
             
-            try
-            {
-                    if ( dataJson != null ) output = dataJson.toString();
+                    while ( ( line = in.readLine() ) != null ) 
+                    {
+                builder.append(line); // + "\r\n"(no need, json has no line breaks!)
             }
-            catch( Exception ex )
-            {
-                    Util.outputErr( "Error in Util.jsonToStr: " + ex.getMessage() );
-            }
-                    
-            return output;
+            
+            in.close();
+        }
+                
+            return builder.toString();
     }
 }

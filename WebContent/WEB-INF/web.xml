@@ -15,7 +15,7 @@
   
   <servlet-mapping>
     <servlet-name>RunService</servlet-name>
-    <url-pattern>/run/</url-pattern>
+    <url-pattern>/run/*</url-pattern>
   </servlet-mapping>
   
   

@@ -1,0 +1,26 @@
+{
+ "actions": {
+   "note1": "{config} - configuration json",
+   "note2": "{payload} - payload json",
+   "note3": "{output} - current action output json",
+
+   "issueVoucherAction": [
+     {
+       "actionId": "1_ClientCreate",
+       "actionType": "DhisApi",
+       "URL": "/api/trackedEntityInstances",
+       "input": "{actionId:PAYLOAD}",
+       "RESTType": "POST",
+       "actionEval": "if( {OUTPUT}.response.status == \"SUCCESS\") { {OUTPUT}.trackedEntityInstance = {OUTPUT}.response.importSummaries[0].reference; } else { {OUTPUT}.errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };"
+     },
+     {
+       "actionId": "2_ClientGet",
+       "actionType": "DhisApi",
+       "URL": "/api/trackedEntityInstances/{1_ClientCreate.response.importSummaries[0].reference}.json",
+       "RESTType": "GET"
+     }
+   ]
+   
+   
+ }
+}
