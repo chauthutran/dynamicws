@@ -27,10 +27,10 @@ public class AppConfigUtil
     {
         File configFile = null;
         JSONObject configJson = null;
-
+        String configFilePath = servletContext.getRealPath( "/" + fileName );
+        
         try
         {
-            String configFilePath = servletContext.getRealPath( "/" + fileName );
             configFile = new File( configFilePath );
 
             if ( configFile.isFile() )
@@ -43,12 +43,33 @@ public class AppConfigUtil
         }
         catch ( Exception ex )
         {
-            Util.outputErr( "Config file name with '" + fileName + "' not found." );
+            System.out.println( "Config file name with '" + configFilePath + "' not found." );
             ex.printStackTrace();
             // throw ex;
         }
         
         return configJson;
+    }
+    
+    
+    public static File getJsFile( String fileName, ServletContext servletContext )
+    {
+        File configFile = null;
+
+        try
+        {
+            String configFilePath = servletContext.getRealPath( "/" + fileName );
+            //Create file for reading the script file
+            configFile = new File( configFilePath );
+        }
+        catch ( Exception ex )
+        {
+            System.out.println( "Util JS file name with '" + fileName + "' not found." );
+            ex.printStackTrace();
+            // throw ex;
+        }
+        
+        return configFile;
     }
     
     

@@ -1,26 +1,43 @@
 {
- "actions": {
-   "note1": "{config} - configuration json",
-   "note2": "{payload} - payload json",
-   "note3": "{output} - current action output json",
+	"actions": {
+		"note1": "{config} - configuration json",
+		"note2": "{payload} - payload json",
+		"note3": "{output} - current action output json",
 
-   "issueVoucherAction": [
-     {
-       "actionId": "1_ClientCreate",
-       "actionType": "DhisApi",
-       "URL": "/api/trackedEntityInstances",
-       "input": "{actionId:PAYLOAD}",
-       "RESTType": "POST",
-       "actionEval": "if( {OUTPUT}.response.status == \"SUCCESS\") { {OUTPUT}.trackedEntityInstance = {OUTPUT}.response.importSummaries[0].reference; } else { {OUTPUT}.errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };"
-     },
-     {
-       "actionId": "2_ClientGet",
-       "actionType": "DhisApi",
-       "URL": "/api/trackedEntityInstances/{1_ClientCreate.response.importSummaries[0].reference}.json",
-       "RESTType": "GET"
-     }
-   ]
-   
-   
- }
+		"issueVoucherAction": [
+		   {
+				"name": "1_ClientCreate",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances",
+				"input": "PAYLOAD",
+				"RESTType": "POST",
+				"actionEval": "if( %%OUTPUT%%.response.status == \"SUCCESS\") { %%OUTPUT%%.trackedEntityInstance = %%OUTPUT%%.response.importSummaries[0].reference; } else { %%OUTPUT%%.errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };",
+				"goTo": "( %%OUTPUT%%.response.status == \"SUCCESS\" ) ? {%%2_ClientGet%%} : {%%5_END%%}"
+			},
+			{
+				"name": "2_ClientGet",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances/{%%1_ClientCreate%%.response.importSummaries[0].reference}.json",
+				"RESTType": "GET"
+			},
+			{
+				"name": "3_ModifyJson",
+				"type": "JS",
+				"input": {"actionName":"%%2_ClientGet%%"},
+				"actionEval": "var yesterday = Util.getLastNDate(1); yesterday = Util.formatDateObj_DbDateTime(yesterday); %%OUTPUT%%.created = yesterday;"
+			},
+			{
+				"name": "4_ClientUpdate",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances/{%%1_ClientCreate%%.response.importSummaries[0].reference}",
+				"RESTType": "PUT"
+			},
+			{
+				"name": "5_END",
+				"type": "JS"
+			}
+		]
+
+
+	}
 }
