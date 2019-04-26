@@ -3,34 +3,27 @@ package psi.ws.action;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
 import org.json.JSONArray;
 
-// "goTo" : ( %%OUTPUT%%.response.status == \"SUCCESS\" ) ? {%%2_ClientGet%%} : {%%5_END%%}
+import psi.ws.exception.ActionException;
+
+// "goTo" : ( [OUTPUT].response.status == \"SUCCESS\" ) ? {[2_ClientGet]} : {[5_END]}
 public class ActionGoTo
 {
-    private static final String REGEXP_ACTIONNAME = "\\{\\s*%%(\\w+)%%\\s*}";
+    private static final String REGEXP_ACTIONNAME = "\\{\\s*\\[(\\w+)\\]\\s*}";
     
     private String goTo;
-    private int currentIndex;
+    private int index;
+    private ActionJSEngine actionJsEngine;
     
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
 
-    public ActionGoTo( String goTo )
+    public ActionGoTo( int index, ActionJSEngine actionJsEngine  )
     {
-        this.goTo = goTo;
-    }
-    
-    public ActionGoTo( int currentIndex )
-    {
-        this.currentIndex = currentIndex;
+        this.index = index;
+        this.actionJsEngine = actionJsEngine;
     }
     
     public void setGoToDefination( String goTo )
@@ -42,23 +35,16 @@ public class ActionGoTo
     // Methods
     // -------------------------------------------------------------------------
 
-    public String getNextActionName( JSONArray actionConfigList, ActionOutput output )
+    public String getNextActionName( JSONArray actionConfigList, ActionOutput output ) throws ActionException
     {
         if( this.goTo != null )
         {
-            String nextActionName = this.getNextActionName( output );
-            for( int i = 0; i< actionConfigList.length(); i++ )
-            {
-                String searchedName = actionConfigList.getJSONObject( i ).getString( "name" );
-                if( searchedName.equals( nextActionName ) )
-                {
-                    return searchedName;
-                }
-            }
+            String currentActionName = actionConfigList.getJSONObject( this.index ).getString( "name" );
+            return this.getNextActionName( currentActionName, output );
         }
-        else if( this.currentIndex < actionConfigList.length() )
+        else if( this.index < actionConfigList.length() )
         { 
-            int next = this.currentIndex + 1;
+            int next = this.index + 1;
             if ( next < actionConfigList.length() )
             {
                 return actionConfigList.getJSONObject( next ).getString( "name" );
@@ -73,12 +59,12 @@ public class ActionGoTo
     // -------------------------------------------------------------------------
 
     /**
-     * @script ( %%OUTPUT%%.response.status == \"SUCCESS\" ) ? {%%2_ClientGet%%} : {%%5_END%%}
+     * @script ( [OUTPUT].response.status == \"SUCCESS\" ) ? {[2_ClientGet]} : {[5_END]}
      * @return "2_ClientGet" OR "5_END"
+     * @throws ActionException 
      * **/
-    private String getNextActionName( ActionOutput output )
-    {
-        String nextActionName = null;
+    private String getNextActionName( String currentActionName, ActionOutput output ) throws ActionException
+    {   
         
         String script = this.goTo;
         Pattern pattern = Pattern.compile( REGEXP_ACTIONNAME );
@@ -88,27 +74,11 @@ public class ActionGoTo
             String match = matcher.group(0);
             String actionName = matcher.group(1);
             script = script.replace( match, "\"" + actionName + "\"" );
-        }     
-        try
-        {
-            script = script.replaceAll( "%%OUTPUT%%", "output" );
-            script = "var f = { next: '\',"
-                + " run: function(){ var output = JSON.parse('" + output.getOutputMsg() + "'); var nextAction = " + script + ";"
-                + " this.next = nextAction } }; f";
-
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName( "JavaScript" );
-            ScriptObjectMirror obj = (ScriptObjectMirror) engine.eval( script );
-            obj.callMember( "run" );
-            nextActionName = obj.getMember( "next" ).toString();
- 
-        }
-        catch ( ScriptException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        }  
         
-        return nextActionName;
+        script = script.replaceAll( "\\" + Action.CONFIG_PARAM_SIGN_START + "OUTPUT" + "\\" + Action.CONFIG_PARAM_SIGN_END, currentActionName );
+        actionJsEngine.runScript( "temp", "''", false, "temp = " + script );
+        return actionJsEngine.getStringValue( "temp" );
     }
     
     

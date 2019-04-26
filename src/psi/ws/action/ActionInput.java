@@ -1,12 +1,11 @@
 package psi.ws.action;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import psi.ws.exception.ActionInputException;
 import psi.ws.util.JSONUtil;
 import psi.ws.util.Util;
 
@@ -16,93 +15,94 @@ public class ActionInput
     private static String PARAMS_REQUEST = "request";
     private static String PARAMS_ACTIONNAME = "actionName";
     
-    private static String REGEXP_REQUEST = "\\{\\s*(\\%\\%" + ActionInput.PARAMS_REQUEST + "\\%\\%)\\.([^\\}]+)+\\s*\\}";
-    private static String REGEXP_ACTIONNAME = "\\{\\s*\\\"(" + ActionInput.PARAMS_ACTIONNAME + ")\\\"\\s*:\\s*\\\"%%(\\w+)%%\\\"\\s*\\}";
+    private static String REGEXP_REQUEST = "\\{\\s*(\\[" + ActionInput.PARAMS_REQUEST + "\\])\\.([^\\}]+)+\\s*\\}";
+    private static String REGEXP_ACTIONNAME = "\\{\\s*\\\"(" + ActionInput.PARAMS_ACTIONNAME + ")\\\"\\s*:\\s*\\\"\\[(\\w+)\\]\\\"\\s*\\}";
     
     private static JSONObject requestData;
-    
     private String inputStr;
+
+    // -------------------------------------------------------------------------
+    // Constructor
+    // -------------------------------------------------------------------------
     
-    public ActionInput( String inputStr, HttpServletRequest request, JSONObject configActionListByActionName ) throws IOException, Exception
+    public ActionInput( String inputStr, HttpServletRequest request, JSONObject actionList ) throws ActionInputException
     {
         super();
 
         String resolvedInput = resolved( inputStr, request );
-        resolvedInput = resolved( resolvedInput, configActionListByActionName );
+        resolvedInput = resolved( resolvedInput, actionList );
       
         this.inputStr = resolvedInput;
     }
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
     
-    public JSONObject getInputJson() throws IOException, Exception
+    public JSONObject getInputJson()
     {
         return JSONUtil.convertJSONData( this.inputStr );
     }
     
-    public String getInputStr() throws IOException, Exception
+    public String getInputStr()
     {
         return this.inputStr;
     }
     
+
+    // -------------------------------------------------------------------------
+    // Supportive methods
     // -------------------------------------------------------------------------
     
     /**
-        @inputStr "PAYLOAD"
+        @throws ActionInputException 
+     * @inputStr "PAYLOAD"
         OR
         {
-            "firstName": {%%request%%.firstName},
-            "lastName": {%%request%%.lastName}
+            "firstName": "{[request].firstName}",
+            "lastName": "{[request].lastName}"
         }
     **/
-    private String resolved( String inputStr, HttpServletRequest request )
+    private String resolved( String inputStr, HttpServletRequest request ) throws ActionInputException
     {
         String resolvedInput = inputStr;
         
+        ActionInput.retrieveInputStreamData( request );
         
-        try
-        {
-            JSONObject requestData = ActionInput.getResquestData( request );
-            
-            resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, requestData.toString() );
-            JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_REQUEST );
-            
-            for( int i = 0; i< parameters.length(); i++ )
-            {   
-                JSONObject param = parameters.getJSONObject( i );
-                String realStr = param.getString( "realStr" );
-                String paramKey = param.getString( "param" );
-                String jsonPath = param.getString( "key" );
-                if( paramKey.equals( ActionInput.PARAMS_REQUEST ) )
-                {
-                    String value = JSONUtil.getValueFromJsonPath( requestData, jsonPath );
-                    resolvedInput = resolvedInput.replaceAll( realStr, value );
-                }
+        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, ActionInput.requestData.toString() );
+        JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_REQUEST );
+        
+        for( int i = 0; i< parameters.length(); i++ )
+        {   
+            JSONObject param = parameters.getJSONObject( i );
+            String realStr = param.getString( "realStr" );
+            String paramKey = param.getString( "param" );
+            String jsonPath = param.getString( "key" );
+            if( paramKey.equals( ActionInput.PARAMS_REQUEST ) )
+            {
+                String value = JSONUtil.getValueFromJsonPath( requestData, jsonPath );
+                resolvedInput = resolvedInput.replaceAll( realStr, value );
             }
         }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-       
         
         return resolvedInput;
     }
     
     /** 
-     * @inputStr {"actionName" : "%%action_1%%"}
+     * @inputStr {"actionName" : "[action_1]"}
      * @return
           --> Result  [
             {
-                 "realStr": {%%actionName%% : "action_1"}
+                 "realStr": {[actionName] : "action_1"}
                  "param": actionName,
                  "key": action_1
             }
         ]
     **/
     private String resolved( String inputStr, JSONObject actionList )
-        throws IOException, Exception
     {
         String resolvedInput = inputStr;
-
+        
         if ( actionList != null && actionList.length() > 0 )
         {
             JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME );
@@ -126,16 +126,20 @@ public class ActionInput
     }
     
 
-    private static JSONObject getResquestData( HttpServletRequest request ) throws IOException, Exception
+    private static void retrieveInputStreamData( HttpServletRequest request ) throws ActionInputException
     {
-        if( requestData == null )
+        try
         {
-            requestData = new JSONObject();
-            requestData = JSONUtil.getJsonFromInputStream( request.getInputStream() );
-            return requestData;
+            if( requestData == null )
+            {
+                requestData = new JSONObject();
+                requestData = JSONUtil.getJsonFromInputStream( request.getInputStream() );
+            }  
         }
-        
-        return requestData;
+        catch( Exception ex )
+        {
+            throw new ActionInputException( ex );
+        }
     }
     
 }

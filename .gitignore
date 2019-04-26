@@ -1,2 +1,5 @@
 *.class
+build/classes/psi/ws/main/RunService.class
+*.class
+build/classes/psi/ws/util/JSONUtil.class
 *.class

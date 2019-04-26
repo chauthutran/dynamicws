@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -17,7 +19,9 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import psi.ws.action.Action;
 import psi.ws.action.ActionDhisRequest;
+import psi.ws.action.ActionGoTo;
 import psi.ws.action.ActionInput;
 import psi.ws.action.ActionRequest;
 import psi.ws.util.Util;
@@ -245,44 +249,103 @@ public class TEST
         
        
 
-//        ActionRequest request = new ActionDhisRequest( "serverName", "link" );
-//        System.out.println( request.getClass().getSimpleName());
-
-        String regExp = "\\{\\s*%%(\\w+)%%\\s*}";
-        String goToStr = "( %%OUTPUT%%.status == \"SUCCESS\" ) ? {%%2_ClientGet%%} : {%%5_END%%}";
+////        ActionRequest request = new ActionDhisRequest( "serverName", "link" );
+////        System.out.println( request.getClass().getSimpleName());
+//
+//        String regExp = "\\{\\s*%%(\\w+)%%\\s*}";
+//        String goToStr = "( %%OUTPUT%%.status == \"SUCCESS\" ) ? {%%2_ClientGet%%} : {%%5_END%%}";
+//        
+//        String script = goToStr;
+//        Pattern pattern = Pattern.compile( regExp );
+//        Matcher matcher = pattern.matcher( goToStr );
+//        while( matcher.find() ) 
+//        {
+//            String match = matcher.group(0);
+//            String actionName = matcher.group(1);
+//            script = script.replace( match, "\"" + actionName + "\"" );
+//        }     
+//        JSONObject response = new JSONObject();
+//        response.put( "status", "SUCCESS" );
+//        
+//        String result = null;
+//        try
+//        {
+//            script = script.replaceAll( "%%OUTPUT%%", "output" );
+//            script = "var f = { next: '\',"
+//                + " run: function(){ var output = JSON.parse('" + response.toString() + "'); var nextAction = " + script + ";"
+//                + " this.next = nextAction } }; f";
+//
+//            ScriptEngine engine = new ScriptEngineManager().getEngineByName( "JavaScript" );
+//            ScriptObjectMirror obj = (ScriptObjectMirror) engine.eval( script );
+//            obj.callMember( "run" );
+//            result = obj.getMember( "next" ).toString();
+//            
+//        }
+//        catch ( ScriptException e )
+//        {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
         
-        String script = goToStr;
-        Pattern pattern = Pattern.compile( regExp );
-        Matcher matcher = pattern.matcher( goToStr );
-        while( matcher.find() ) 
-        {
-            String match = matcher.group(0);
-            String actionName = matcher.group(1);
-            script = script.replace( match, "\"" + actionName + "\"" );
-        }     
-        JSONObject response = new JSONObject();
-        response.put( "status", "SUCCESS" );
+//        String output = "[OUTPUT].response.status &&  [OUTPUT].success ";
+//          String  script = output.replaceAll( "\\" + Action.CONFIG_PARAM_SIGN_START + "OUTPUT" + "\\" + Action.CONFIG_PARAM_SIGN_END, "output" );
+//          System.out.println( "script 1 : " + script );
+////            script = "var f = { data: '" + output
+////                + "',run: function(){ var output = JSON.parse(this.data); " + script
+////                + " this.data = JSON.stringify(output); } }; f";
+////            
+////            ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+////            
+////                ScriptObjectMirror obj = (ScriptObjectMirror) jsEngine.eval( script );
+////  System.out.println(" script : " + script );
+////            obj.callMember( "run" );
+////            System.out.println( obj.getMember( "data" ).toString() );
         
-        String result = null;
-        try
-        {
-            script = script.replaceAll( "%%OUTPUT%%", "output" );
-            script = "var f = { next: '\',"
-                + " run: function(){ var output = JSON.parse('" + response.toString() + "'); var nextAction = " + script + ";"
-                + " this.next = nextAction } }; f";
-
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName( "JavaScript" );
-            ScriptObjectMirror obj = (ScriptObjectMirror) engine.eval( script );
-            obj.callMember( "run" );
-            result = obj.getMember( "next" ).toString();
-            
+//        String actionEval = " action_2_ClientGet.tested = 'fadsf';";
+//
+//        ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+//        jsEngine.eval("var action_2_ClientGet = {}" );
+//        jsEngine.eval(actionEval);
+//    
+////        ScriptObjectMirror obj = (ScriptObjectMirror) jsEngine.eval( actionEval );
+//        
+//        
+//        System.out.println( jsEngine. );
+        
+//        String outputStr = "var action_2_ClientGet = {}";
+//        String actionEval = "";
+//        
+//        ScriptEngineManager manager = new ScriptEngineManager();
+//        ScriptEngine engine = manager.getEngineByName("js");
+//        
+////        engine.eval("var clientGet = ''" );
+////      engine.eval( "clientGet = 'fadsf';" );
+//      
+//        engine.eval("var _1_ClientCreate = {\"status\":\"SUCCESS\"}" );
+//        engine.eval( "_1_ClientCreate.tested = 'fadsf';" );
+//        engine.eval( "_1_ClientCreate_goTo = ( _1_ClientCreate.status == \"SUCCESS\" ) ? \"2_ClientGet\" : \"5_END\";" );
+//
+////        Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
+////        Object a = bindings.get("a");
+////        Object b = bindings.get("b");
+////        System.out.println("a = " + a);
+////        System.out.println("b = " + b);
+//
+////        Object result = engine.eval("c = a + b;"); 
+////        Object result = engine.eval("c = a + b;");
+//        
+////        Object data = bindings.get( "clientGet" );
+////        System.out.println( data.getClass().getName() );
+//      
+//      Object data1 = engine.eval("JSON.stringify(_1_ClientCreate)");
+//      Object data2 = engine.eval("_1_ClientCreate_goTo");
+//      
+//        System.out.println(  data1 );
+//        System.out.println(  data2 );
+        
+        
+        
+        
         }
-        catch ( ScriptException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-}
         
     }

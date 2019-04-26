@@ -24,41 +24,23 @@ import psi.ws.action.ActionOutput;
 
 public final class Util
 {
-    public static boolean DEBUG_FLAG = false;
-
     public static final String ENCODING_UTF8 = "UTF-8";
     public static final int REQUEST_TIMEOUT = 240000; // 4 min;
     
     public static final String CONFIG_FILE_COMMON_DATE = "config.json";
     public static final String CONFIG_FILE_ACTION_DATA = "config_actions.json";
     public static final String UTIL_JAVASCRIPT_LIB_FILE = "js/util.js";
-    
-    public static final String ACTION_TYPE_ISSUEVOUCHER = "issueVoucherAction";
 
     public static final String ACTION_ID_PAYLOAD = "PAYLOAD";
     
     
     public static final String REQUEST_CONTENT_TYPE_DHIS = "DHIS";
-    public static final String REQUEST_CONTENT_TYPE_FOCUSONE = "FOCUSONE";
-    public static final String REQUEST_CONTENT_TYPE_LOCAL_SMS_JSON = "LOCAL_SMS_JSON";
-    public static final String REQUEST_CONTENT_TYPE_LOCAL_SMS_POST_FORM = "LOCAL_SMS_POST_FORM";
     
 
     public static final String REQUEST_TYPE_GET = "GET";
     public static final String REQUEST_TYPE_POST = "POST";
     public static final String REQUEST_TYPE_PUT = "PUT";
     public static final String REQUEST_TYPE_DELETE = "DELETE";
-
-    public static String ACCESS_SERVER_USERNAME_PROFILER = "";
-    public static String ACCESS_SERVER_PASSWORD_PROFILER = "";
-
-    
-    public static String REQUEST_ACTION_TYPE_ERROR = "Error";
-    public static String REQUEST_ACTION_TYPE_DHIS = "DhisApi";
-    public static String REQUESTION_DHIS_ACTION_ID_REQUESTCUSTOM = "RequestCustom";
-    public static String REQUESTION_DHIS_ACTION_ID_CLIENTGET = "ClientGet";
-    public static String REQUESTION_DHIS_ACTION_ID_CLIENTUPDATE = "ClientUpdate";
-    public static String REQUESTION_DHIS_ACTION_ID_CLIENTCREATE = "ClientCreate";
 
     // -------------------------------------------------------------------------
     // DHIS RELATED 
@@ -93,17 +75,13 @@ public final class Util
         
         try
         {
+            System.out.println("\n === RequestURL : " + url );
             // Open HttpsURLConnection and Set Request Type.
             URL obj = new URL( url );
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
             // add Request header
             con.setRequestMethod( requestType );
-
-            // con.setRequestProperty( "User-Agent",
-            // "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11"
-            // );
-//            con.setRequestProperty( "User-Agent", "ConnectApp/" + VERSION_NO + " CFNetwork/711.1.16 Darwin/14.0.0" );
 
             con.setRequestProperty( "Accept",
                 "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" );
@@ -120,22 +98,6 @@ public final class Util
                 String userpass = action.getRequest().getUsername() + ":" + action.getRequest().getPassword();
                 String basicAuth = "Basic " + new String( new Base64().encode( userpass.getBytes() ) );
                 con.setRequestProperty( "Authorization", basicAuth );
-            }
-            else if ( sourceType.equals( Util.REQUEST_CONTENT_TYPE_FOCUSONE ) )
-            {
-                con.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded; charset=utf-8" );
-            }
-            else if ( sourceType.equals( Util.REQUEST_CONTENT_TYPE_LOCAL_SMS_JSON ) )
-            {
-                con.setRequestProperty( "Content-Type", "application/json; charset=utf-8" );
-            }
-            else if ( sourceType.equals( Util.REQUEST_CONTENT_TYPE_LOCAL_SMS_POST_FORM ) )
-            {
-                con.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded" );
-            }
-            else
-            {
-                con.setRequestProperty( "Content-Type", "text/plain; charset=utf-8" );
             }
 
             // Send post request
@@ -174,7 +136,6 @@ public final class Util
             try
             {
                 // 5. Message content retrieve
-                // if ( dataStore.responseCode == HttpURLConnection.HTTP_OK )
                 if ( output.getResponseCode() <= 400 )
                 {
                     output.setOutputMsg( readInputStream( con.getInputStream() ) );
@@ -194,8 +155,6 @@ public final class Util
         catch ( Exception ex )
         {
             output.setOutputMsg( "{\"error\":\"Failed during sendRequestHTTP: " + ex.getMessage() + "\"}" );
-            // responseMsgTemp.append( "-- Failed during sendRequestHTTP" );
-
             throw ex;
         }
     }
@@ -230,10 +189,10 @@ public final class Util
     
     /** @value A JSON string or A string 
      * value : 
-     * {%%1_ClientCreate%%.response.importSummaries[0].reference}.json
+     * {[%1_ClientCreate]%.response.importSummaries[0].reference}.json
      *          --> Result  [
                  {
-                      "realStr": {%%1_ClientCreate%%.response.importSummaries[0].reference}
+                      "realStr": {[1_ClientCreate].response.importSummaries[0].reference}
                       "param": 1_ClientCreate,
                       "key": response.importSummaries[0].reference
                  }
@@ -242,13 +201,13 @@ public final class Util
      *       [   
      *          {
                     "attribute": "w75KJ2mc4zz",
-                    "value": "{%%request%%.params.firstname}"
+                    "value": "{[request].params.firstname}"
                 }
              ]
              --> result : 
              [
                  {
-                      "realStr":  {%%request%%.params.firstname},
+                      "realStr":  {[request].params.firstname},
                       "param": request,
                       "key": params.firstname
                  }
@@ -265,10 +224,10 @@ public final class Util
         {
             String match = matcher.group();
             
-            // Get parameter name which is in "%%xxx%%". Ex. {%%request%%.firstName}, get "request"
+            // Get parameter name which is in "[xxx]". Ex. {[request].firstName}, get "request"
             String parameter = matcher.group( 1 );
             
-            // Get key which is in "%%xxx%%". Ex. {%%request%%.firstName}, get "firstName"
+            // Get key which is in "[xxx]". Ex. {[request].firstName}, get "firstName"
             String key = matcher.group( 2 );
             
             JSONObject param = new JSONObject();
@@ -282,13 +241,12 @@ public final class Util
     }
     
     public static void respondMsgOut( ActionOutput output, HttpServletResponse response )
-        throws IOException, Exception
+        throws Exception
     {
         response.setContentType( "application/json" );
         response.setStatus( output.getResponseCode() );
         
         PrintWriter out = response.getWriter();
-        System.out.println("\n\n === output.getOutputMsg() " + output.getOutputMsg() );
         out.print( output.getOutputMsg() );
         out.flush();
     }

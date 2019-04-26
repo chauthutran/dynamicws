@@ -1,39 +1,34 @@
 package psi.ws.action;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
 import org.json.JSONObject;
+
+import psi.ws.exception.ActionException;
 
 public class ActionOutput
 {
     private int responseCode = 200;
 
     private String actionEval;
+
     private String outputMsg = "";
-    ScriptEngine jsEngine;
+
+    ActionJSEngine actionJsEngine;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-    
-    public ActionOutput()
+
+    public ActionOutput( ActionJSEngine actionJsEngine )
     {
         super();
+        this.actionJsEngine = actionJsEngine;
     }
-    
-    public ActionOutput( ScriptEngine jsEngine )
+
+    public ActionOutput( String outputMsg, int responseCode )
     {
         super();
-        this.jsEngine = jsEngine;
+        this.outputMsg = outputMsg;
+        this.responseCode = responseCode;
     }
 
     // -------------------------------------------------------------------------
@@ -50,66 +45,55 @@ public class ActionOutput
         this.responseCode = responseCode;
     }
 
+    /**
+     * If outputMsg is a string, then convert it to JSONObject, like this
+     * {"output" : this.outputMsg }. Then convert JSONObject to String If
+     * outputMsg is a JSONObject, then return this outputMsg
+     * **/
     public String getOutputMsg()
     {
-        return this.outputMsg;
+        String msg = this.outputMsg;
+        JSONObject data = null;
+        try
+        {
+            data = new JSONObject( msg );
+        }
+        catch ( Exception ex )
+        {
+            data = new JSONObject();
+            data.put( "output", msg );
+        }
+
+        return data.toString();
+    }
+
+    public JSONObject getOutputJson()
+    {
+        return new JSONObject( this.getOutputMsg() );
     }
 
     public void setOutputMsg( String outputMsg )
     {
         this.outputMsg = outputMsg;
     }
-
-    public String getActionEval()
-    {
-        return actionEval;
-    }
-
+    
     public void setActionEval( String actionEval )
     {
         this.actionEval = actionEval;
     }
-    
+
     // -------------------------------------------------------------------------
     // Methods
     // -------------------------------------------------------------------------
 
-    public JSONObject getOutputJson()
+    public void evalOutput( String actionName )
+        throws ActionException
     {
-        return new JSONObject( this.outputMsg );
-    }
-    
-    public void evalOutput() throws FileNotFoundException
-    {
-        if( !this.outputMsg.isEmpty() && this.actionEval != null )
+        this.actionJsEngine.addVariable( actionName, this.getOutputJson() );
+        if( this.actionEval != null )
         {
-            String result = null;
-
-            try
-            {
-                String script = this.actionEval;
-                script = script.replaceAll( "%%OUTPUT%%", "output" );
-                script = "var f = { data: '" + this.outputMsg
-                    + "',run: function(){ var output = JSON.parse(this.data); " + script
-                    + " this.data = JSON.stringify(output); } }; f";
-                  
-//                ScriptEngine engine = new ScriptEngineManager().getEngineByName( "JavaScript" );
-//                //Pass the script file to the engine
-//                Reader jsFileReader = new FileReader( this.jsEngine );
-//                engine.eval( jsFileReader );
-                
-                ScriptObjectMirror obj = (ScriptObjectMirror) this.jsEngine.eval( script );
-                obj.callMember( "run" );
-                result = obj.getMember( "data" ).toString();
-
-            }
-            catch ( ScriptException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            this.outputMsg = result;
+            this.actionJsEngine.runScript( actionName, this.getOutputMsg(), true, this.actionEval );
+            this.outputMsg = this.actionJsEngine.getJSONValue( actionName ).toString();
         }
     }
 }

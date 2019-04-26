@@ -2,13 +2,16 @@ package psi.ws.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+
+import psi.ws.exception.ActionException;
 
 public class AppConfigUtil
 {
@@ -16,60 +19,42 @@ public class AppConfigUtil
     // Getting username / password to access server from config.json file
     // -------------------------------------------------------------------------
 
-    public static JSONObject readConfigFile( String fileName, ServletContext serverContext )
-        throws ServletException
+    public static JSONObject readConfigFile( String fileName, ServletContext serverContext ) throws ActionException
     {
         JSONObject configJson = AppConfigUtil.jsonConfigLoad( fileName, serverContext );
         return configJson;
     }
 
-    public static JSONObject jsonConfigLoad( String fileName, ServletContext servletContext )
+    public static JSONObject jsonConfigLoad( String fileName, ServletContext servletContext ) throws ActionException
     {
         File configFile = null;
         JSONObject configJson = null;
         String configFilePath = servletContext.getRealPath( "/" + fileName );
-        
-        try
-        {
-            configFile = new File( configFilePath );
+        configFile = new File( configFilePath );
 
-            if ( configFile.isFile() )
-            {
-                String configJsonStr = readFile( configFilePath );
-                configJsonStr = configJsonStr.substring(configJsonStr.indexOf("{"));
-                configJson = new JSONObject( configJsonStr.trim() );
-            }
-       
-        }
-        catch ( Exception ex )
+        if ( configFile.isFile() )
         {
-            System.out.println( "Config file name with '" + configFilePath + "' not found." );
-            ex.printStackTrace();
-            // throw ex;
+            String configJsonStr = readFile( configFilePath );
+            configJsonStr = configJsonStr.substring(configJsonStr.indexOf("{"));
+            configJson = new JSONObject( configJsonStr.trim() );
         }
         
         return configJson;
     }
     
     
-    public static File getJsFile( String fileName, ServletContext servletContext )
+    public static FileReader getJsFileReader( String fileName, ServletContext servletContext ) throws ActionException
     {
-        File configFile = null;
-
+        String configFilePath = servletContext.getRealPath( "/" + fileName );
+        File jsLibFile = new File( configFilePath );
         try
         {
-            String configFilePath = servletContext.getRealPath( "/" + fileName );
-            //Create file for reading the script file
-            configFile = new File( configFilePath );
+            return new FileReader( jsLibFile );
         }
-        catch ( Exception ex )
+        catch ( FileNotFoundException e )
         {
-            System.out.println( "Util JS file name with '" + fileName + "' not found." );
-            ex.printStackTrace();
-            // throw ex;
+            throw new ActionException( "The file " + fileName + " not found" );
         }
-        
-        return configFile;
     }
     
     
@@ -77,25 +62,19 @@ public class AppConfigUtil
     // Supportive Methods
     // -------------------------------------------------------------------------
 
-    private static String readFile( String path )
-        throws IOException
+    private static String readFile( String path ) throws ActionException
     {   
         String jsonText = null;
-        try {
-            jsonText = IOUtils.toString(new FileInputStream(new File(path)));
-            int i = jsonText.indexOf("{");
-            jsonText = jsonText.substring(i);
-//            JSONObject jsonFile = new JSONObject(jsonText);
-//            System.out.println("Input JSON data: "+ jsonFile.toString());
-//            Object result = jsonFile.get("result");
-//            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
+        try
+        {
+            jsonText = IOUtils.toString( new FileInputStream( new File( path ) ) );
+            int i = jsonText.indexOf( "{" );
+            jsonText = jsonText.substring( i );
+        }
+        catch ( IOException e )
+        {
+            throw new ActionException( "The file " + path + " not found" );
         }
         return jsonText;
-        
-        
-//        byte[] encoded = Files.readAllBytes( Paths.get( path ) );
-//        return new String( encoded );
     }
 }

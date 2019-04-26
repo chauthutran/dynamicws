@@ -1,6 +1,5 @@
 package psi.ws.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.json.JSONArray;
@@ -12,45 +11,19 @@ public class JSONUtil
 {
     public static JSONObject convertJSONData( String jsonStr )
     {
-        JSONObject result = new JSONObject();
-        
-        try
-        {
-            return new JSONObject( jsonStr.trim() );
-//            
-//            result.put( "status", "SUCCESS" );
-//            result.put(  "data", jsonData );
-//            
-        }
-        catch( Exception ex )
-        {
-//            result.put( "status", "ERROR" );
-//            result.put(  "errorMsg", ex.getMessage() );
-//            result.put(  "data", JSONObject.NULL );
-        }
-        
-        return result;
+        return new JSONObject( jsonStr.trim() );
     }
     
     // Convert InputStream to String
     public static JSONObject getJsonFromInputStream( InputStream is ) throws Exception
     {
-        JSONObject jsonData = new JSONObject(); // Default blank Json
+        JSONObject jsonData = new JSONObject(); // Default blank JSON
 
-        try
-        {
-            String contentStr = Util.readInputStream( is );
+        String contentStr = Util.readInputStream( is );
 
-            if ( !contentStr.isEmpty() )
-            {
-                jsonData = new JSONObject( contentStr );
-            }
-        }
-        catch ( IOException e )
+        if ( !contentStr.isEmpty() )
         {
-            System.out.println( "Failed on getJsonFromInputStream" );
-            e.printStackTrace();
-            throw e;
+            jsonData = new JSONObject( contentStr );
         }
 
         return jsonData;
@@ -62,7 +35,6 @@ public class JSONUtil
 
         if ( jsonDataInput != null && jsonDataInput.has( key ) )
         {
-            // output = jsonDataInput.getString( key );
             output = jsonDataInput.get( key ).toString();
         }
 

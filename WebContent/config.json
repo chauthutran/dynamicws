@@ -1,9 +1,11 @@
 {
-	"ACCESS_SERVER_USERNAME": "system",
-	"ACCESS_SERVER_PASSWORD": "System123",
-	"ACCESS_SERVER_NAME": "https://play.dhis2.org/2.30"
 	
-	,"ACCESS_SERVER_USERNAME_BACKUP": "eref.webapp",
-	"ACCESS_SERVER_PASSWORD_BACKUP": "8frhKmMe",
-	"ACCESS_SERVER_NAME_BACKUP": "https://leap.psi-mis.org"
+	"ACCESS_SERVER_USERNAME": "cws.app.",
+	"ACCESS_SERVER_PASSWORD": "j9S4MDxSr8CK5cXB",
+	"ACCESS_SERVER_NAME": "https://latest.psi-mis.org" ,
+	
+	"ACCESS_SERVER_USERNAME_BACKUP": "system",
+	"ACCESS_SERVER_PASSWORD_BACKUP": "System123",
+	"ACCESS_SERVER_NAME_BACKUP": "https://play.dhis2.org/2.30"
+	
 }

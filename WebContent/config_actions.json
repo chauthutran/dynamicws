@@ -3,37 +3,45 @@
 		"note1": "{config} - configuration json",
 		"note2": "{payload} - payload json",
 		"note3": "{output} - current action output json",
-
+		
+		"testPayload_DhisDemoServer" :  {
+		 	"orgUnit": "Rp268JB6Ne4",
+		 	"trackedEntityType": "nEenWmSyUEp",
+		 	"attributes": [{
+		 		"attribute": "w75KJ2mc4zz",
+		 		"value": "First Name 1"
+		 	}]
+		 },
+		 
 		"issueVoucherAction": [
 		   {
-				"name": "1_ClientCreate",
+				"name": "_1_ClientCreate",
 				"type": "DHIS",
 				"URL": "/api/trackedEntityInstances",
 				"input": "PAYLOAD",
 				"RESTType": "POST",
-				"actionEval": "if( %%OUTPUT%%.response.status == \"SUCCESS\") { %%OUTPUT%%.trackedEntityInstance = %%OUTPUT%%.response.importSummaries[0].reference; } else { %%OUTPUT%%.errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };",
-				"goTo": "( %%OUTPUT%%.response.status == \"SUCCESS\" ) ? {%%2_ClientGet%%} : {%%5_END%%}"
+				"actionEval": "if( [OUTPUT].response.status == \"SUCCESS\") { [OUTPUT].trackedEntityInstance = [OUTPUT].response.importSummaries[0].reference; } else { [OUTPUT].errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };",
+				"goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[_2_ClientGet]} : {[_5_END]}"
 			},
 			{
-				"name": "2_ClientGet",
+				"name": "_2_ClientGet",
 				"type": "DHIS",
-				"URL": "/api/trackedEntityInstances/{%%1_ClientCreate%%.response.importSummaries[0].reference}.json",
+				"URL": "/api/trackedEntityInstances/{[_1_ClientCreate].response.importSummaries[0].reference}.json",
 				"RESTType": "GET"
 			},
 			{
-				"name": "3_ModifyJson",
+				"name": "_3_ModifyJson",
 				"type": "JS",
-				"input": {"actionName":"%%2_ClientGet%%"},
-				"actionEval": "var yesterday = Util.getLastNDate(1); yesterday = Util.formatDateObj_DbDateTime(yesterday); %%OUTPUT%%.created = yesterday;"
+				"actionEval": "var yesterday = Util.getLastNDate(1); yesterday = Util.formatDateObj_DbDateTime(yesterday); _2_ClientGet.created = yesterday;"
 			},
 			{
-				"name": "4_ClientUpdate",
+				"name": "_4_ClientUpdate",
 				"type": "DHIS",
-				"URL": "/api/trackedEntityInstances/{%%1_ClientCreate%%.response.importSummaries[0].reference}",
+				"URL": "/api/trackedEntityInstances/{[_1_ClientCreate].response.importSummaries[0].reference}",
 				"RESTType": "PUT"
 			},
 			{
-				"name": "5_END",
+				"name": "_5_END",
 				"type": "JS"
 			}
 		]
