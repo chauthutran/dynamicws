@@ -5,6 +5,8 @@ import java.io.InputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import psi.ws.exception.ActionException;
+
 import com.jayway.jsonpath.JsonPath;
 
 public class JSONUtil
@@ -15,18 +17,25 @@ public class JSONUtil
     }
     
     // Convert InputStream to String
-    public static JSONObject getJsonFromInputStream( InputStream is ) throws Exception
+    public static JSONObject getJsonFromInputStream( InputStream is ) throws ActionException
     {
-        JSONObject jsonData = new JSONObject(); // Default blank JSON
-
-        String contentStr = Util.readInputStream( is );
-
-        if ( !contentStr.isEmpty() )
+        try
         {
-            jsonData = new JSONObject( contentStr );
-        }
+            JSONObject jsonData = new JSONObject(); // Default blank JSON
 
-        return jsonData;
+            String contentStr = Util.readInputStream( is );
+
+            if ( !contentStr.isEmpty() )
+            {
+                jsonData = new JSONObject( contentStr );
+            }
+
+            return jsonData;
+        }
+        catch( Exception ex )
+        {
+            throw new ActionException( "Fail to get JSON data from request" );
+        }
     }
     
     public static String getJSONStrVal( JSONObject jsonDataInput, String key )
@@ -41,18 +50,6 @@ public class JSONUtil
         return output;
     }
     
-    public static JSONArray getJsonArray( JSONObject jsonObj, String propName )
-    {
-        JSONArray propJsonArr = new JSONArray();
-
-        if ( jsonObj != null && jsonObj.has( propName ) )
-        {
-            propJsonArr = jsonObj.getJSONArray( propName );
-        }
-
-        return propJsonArr;
-    }
-
     public static JSONObject getJsonObject( JSONArray jsonObjArr, String propName, String propVal )
     {
         JSONObject propJson = null;

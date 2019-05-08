@@ -1,15 +1,14 @@
 package psi.ws.action;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import org.json.JSONObject;
 
+import psi.ws.action.request.ActionMongodbRequest;
+import psi.ws.action.request.ActionWebServiceRequest;
+import psi.ws.configuration.Configuration;
 import psi.ws.exception.ActionException;
-import psi.ws.exception.ActionInputException;
 import psi.ws.exception.ActionPropertyException;
-import psi.ws.util.Util;
 
 public class Action
 {
@@ -18,10 +17,11 @@ public class Action
     public static final String REQEXP_NAME = "^[a-zA-Z_][a-zA-Z0-9_]*";
     
     public static final String ACTION_TYPE_DHIS = "DHIS";
-    public static final String ACTION_TYPE_FOCUSONE = "FOCUSONE";
-    public static final String ACTION_TYPE_LOCAL_SMS_JSON = "LOCAL_SMS_JSON";
-    public static final String ACTION_TYPE_LOCAL_SMS_POST_FORM = "LOCAL_SMS_POST_FORM";
+    public static final String ACTION_TYPE_MONGO = "MONGO";
     public static final String ACTION_TYPE_JAVASCRIPT = "JS";
+
+    public static String PARAMS_REQUEST = "request";
+    public static String PARAMS_ACTIONNAME = "actionName";
     
     private String name;
     private String type;
@@ -29,13 +29,14 @@ public class Action
     private ActionRequest request;
     private ActionOutput output;
     private ActionGoTo goTo;
-    
+    private List<Action> ranAction;
+    private JSONObject actionListByName;
 
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
     
-    public Action( String name, ActionInput input, ActionRequest request, ActionGoTo goTo )
+    public Action( String name, JSONObject httpRequestData, ActionInput input, ActionRequest request, ActionGoTo goTo )
     {
         super();
         this.name = name;
@@ -54,9 +55,9 @@ public class Action
         "actionEval": "if( [OUTPUT].response.status == \"SUCCESS\") { [OUTPUT].trackedEntityInstance = [OUTPUT].response.importSummaries[0].reference; } else { [OUTPUT].errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };",
         "goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[2_ClientGet]} : {[5_END]}"
     } 
-     * @throws ActionException 
+     * @throws ActionException s
     **/
-    public Action( HttpServletRequest httpRequest, JSONObject actionData, Action prevAction, JSONObject actionList, ActionJSEngine actionJsEngine, String serverName, String username, String password ) throws ActionException 
+    public Action( JSONObject actionData, JSONObject httpRequestData, List<Action> ranAction, JSONObject actionListByName, ActionJSEngine actionJsEngine, Configuration configuration ) throws ActionException
     {
         // Get name && type
         if( !actionData.has( "name" ) )
@@ -78,14 +79,27 @@ public class Action
             throw new ActionPropertyException("type");
         }
         
+        Action prevAction = null;
+        if( ranAction.size() > 0 )
+        {
+            prevAction = ranAction.get( ranAction.size() - 1 ); 
+        }
+        
         this.name = actionData.getString( "name" );
         this.type = actionData.getString( "type" );
-        this.input = createInput( actionData, prevAction, actionList, httpRequest );
-        this.request = createRequest( actionData, serverName, username, password, actionJsEngine );
+        this.input = createInput( actionData, prevAction, httpRequestData, actionListByName );
+        this.request = createRequest( actionData, configuration, httpRequestData, actionJsEngine );
         this.output = createOutput( actionData, prevAction, actionJsEngine );
         this.goTo = createGoTo( actionData, actionJsEngine );
-    }
+        
 
+        this.ranAction = ranAction;
+        this.actionListByName = actionListByName;
+        
+        
+    }
+    
+    
     // -------------------------------------------------------------------------
     // Getters
     // -------------------------------------------------------------------------
@@ -129,23 +143,17 @@ public class Action
     {
         if( this.request != null )
         {
-            if( this.type.equals( Action.ACTION_TYPE_DHIS ) )
-            {
-                try
-                {
-                    Util.sendRequest( this, actionList );
-                }
-                catch( Exception ex )
-                {
-                    throw new ActionException( "", ex );
-                }
-            }
+            this.request.sendRequest( this );
             
         }
         else if( this.type.equals( Action.ACTION_TYPE_JAVASCRIPT ) )
         {
             // this.output.evalOutput();
         }
+        
+        // Put the ran action in list
+        this.ranAction.add( this );
+        this.actionListByName.put( this.name, this );
         
         this.output.evalOutput( this.name );
     }
@@ -165,12 +173,12 @@ public class Action
         return name.matches( Action.REQEXP_NAME );
     }
     
-    private ActionInput createInput( JSONObject actionData, Action prevAction, JSONObject actionList, HttpServletRequest httpRequest ) throws ActionInputException
+    private ActionInput createInput( JSONObject actionData, Action prevAction, JSONObject httpRequestData, JSONObject actionList ) throws ActionException
     {
         // ---------------------------------------------------------------------
         // ActionInput
         
-        // Generate "input" property from previous action if there is not defination
+        // Generate "input" property from previous action if there is not definition
         // "input" will get from outPut of previous action. Don't need to do this one for the first action in configuration
         if( actionData.getInt( "index" ) > 0 && !actionData.has( "input" ) && prevAction != null )
         {
@@ -195,13 +203,13 @@ public class Action
                 inputStr = ( ( JSONObject ) inputData ).toString();
             }
             
-            input = new ActionInput( inputStr, httpRequest, actionList );
+            input = new ActionInput( inputStr, httpRequestData, actionList );
         }
         
         return input;
     }
     
-    private ActionRequest createRequest( JSONObject actionData, String serverName, String username, String password, ActionJSEngine actionJsEngine ) throws ActionException
+    private ActionRequest createRequest( JSONObject actionData, Configuration configuration, JSONObject httpRequestData, ActionJSEngine actionJsEngine ) throws ActionException
     {
         ActionRequest actionRequest = null;
         String type = actionData.getString( "type" );
@@ -209,7 +217,12 @@ public class Action
         {
             String link = actionData.getString( "URL" );
             String requestType = actionData.getString( "RESTType" );
-            actionRequest = new ActionDhisRequest( serverName, link, requestType, username, password, actionJsEngine );
+            actionRequest = new ActionWebServiceRequest( configuration, httpRequestData, link, requestType, actionJsEngine, this.actionListByName );
+        }
+        else if( type.equals( Action.ACTION_TYPE_MONGO ) )
+        {
+            String requestType = actionData.getString( "RESTType" );
+            actionRequest = new ActionMongodbRequest( configuration, requestType );
         }
 
         return actionRequest;
@@ -222,13 +235,13 @@ public class Action
         String type = actionData.getString( "type" );
         if ( type.equals( Action.ACTION_TYPE_JAVASCRIPT ) )
         {
-            if( prevAction != null )
-            {
-                output.setOutputMsg( prevAction.getOutput().getOutputMsg() );
-            }
-            else
+            if( this.input.getInputStr() != null )
             {
                 output.setOutputMsg( this.input.getInputStr() );
+            }
+            else if( prevAction != null )
+            {
+                output.setOutputMsg( prevAction.getOutput().getOutputMsg() );
             }
         }
         

@@ -1,12 +1,36 @@
 
 function Util() {}
 
+// -----------------------------------------------------------------------------
+// JSON
+// -----------------------------------------------------------------------------
+
+Util.findItemFromList = function( listData, searchProperty, searchValue )
+{
+	var foundData;
+	for( var i in listData )
+	{
+		var item = listData[i];
+		if ( item[ searchProperty ] == searchValue )
+		{
+			foundData = item;
+		}
+	}
+
+	return foundData;
+};
+
+
+// -----------------------------------------------------------------------------
+// DATE
+// -----------------------------------------------------------------------------
+
 /** 
  * Result : 2017-01-30T10:30:15
  * **/
-Util.getCurrentDateTime = function()
+Util.getLastNDbDate = function( noDays )
 {
-	var date = Util.getLastNDate( 0 );
+	var date = Util.getLastNDate( noDays );
 	
 	var day = date.getDate();
 	day = ( day < 10 ) ? "0" + day : day;
@@ -58,11 +82,11 @@ Util.convertDateStrToObj = function( dateStr ) {
 	var hour = "00";
 	var minute = "00";
 	var second = "00";
-	if( serverdate.length > 10 )
+	if( dateStr.length > 10 )
 	{
-		hour = serverdate.substring( 11, 13);
-		minute = serverdate.substring( 14, 16 );
-		second = serverdate.substring( 17, 19 );
+		hour = dateStr.substring( 11, 13);
+		minute = dateStr.substring( 14, 16 );
+		second = dateStr.substring( 17, 19 );
 	}
 
 	var date = new Date( year, month, day, hour, minute, second );

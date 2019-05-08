@@ -2,7 +2,6 @@ package psi.ws.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -20,6 +19,8 @@ import org.json.JSONObject;
 
 import psi.ws.action.Action;
 import psi.ws.action.ActionOutput;
+import psi.ws.action.request.ActionWebServiceRequest;
+import psi.ws.exception.ActionException;
 
 
 public final class Util
@@ -45,32 +46,14 @@ public final class Util
     // -------------------------------------------------------------------------
     // DHIS RELATED 
     // -------------------------------------------------------------------------
-
-    // String requestType, String url, JSONObject jsonData, Map<String, Object> params,
-   // String sourceType, ActionOutput actionOutput, String username, String password 
-    public static void sendRequest( Action action, JSONObject actionList )
-        throws Exception, IOException
-    {
-        try
-        {
-            Util.sendRequestHTTP( action, actionList );
-        }
-        catch ( Exception ex )
-        {
-            String errMsg = "SendRequest, responseCode: " + action.getOutput().getResponseCode() + ", Msg: " + ex.getMessage();
-            action.getOutput().setOutputMsg( "{\"error\":\"" + errMsg + "\"}" );
-
-            throw ex;
-        }
-    }
-
+    
     // HTTPS GET/POST/PUT request
-    private static void sendRequestHTTP( Action action, JSONObject actionList )
-        throws Exception, IOException
+    public static void sendRequest( Action action ) throws ActionException
     {
-        String url = action.getRequest().generateRequestURL( actionList );
+        ActionWebServiceRequest request = ( ActionWebServiceRequest )action.getRequest();
+        String url = request.getUrl();
         String sourceType = action.getType();
-        String requestType = action.getRequest().getRequestType();
+        String requestType = request.getRequestType();
         ActionOutput output = action.getOutput();
         
         try
@@ -95,7 +78,7 @@ public final class Util
             {
                 con.setRequestProperty( "Content-Type", "application/json; charset=utf-8" );
 
-                String userpass = action.getRequest().getUsername() + ":" + action.getRequest().getPassword();
+                String userpass = request.getConfiguration().getUsername() + ":" + request.getConfiguration().getPassword();
                 String basicAuth = "Basic " + new String( new Base64().encode( userpass.getBytes() ) );
                 con.setRequestProperty( "Authorization", basicAuth );
             }
@@ -115,22 +98,17 @@ public final class Util
             }
             catch ( Exception ex )
             {
-                // wr.write does ACTUAL REQUESTING!!!
-                output.setOutputMsg( "{\"error\":\"ERROR ON Util.sendRequestHTTP, REQUESTING -  " + ex.getMessage() + "\"}" );
-
-                throw ex;
+               throw new ActionException( "ERROR ON Util.sendRequestHTTP, REQUESTING -  " + ex.getMessage() );
             }
+            
             try
             {
                 // 4. Send and get Response <-- ACTUAL SENDING/REQUESTING!!!!!
                 output.setResponseCode( con.getResponseCode() );
             }
             catch ( Exception ex )
-            {                
-                output.setOutputMsg( "{\"error\":\"ERROR ON Util.sendRequestHTTP, SERVER NOT KNOWN CASE - " + ex.getMessage() + "\"}" );
-                output.setResponseCode( 520 );
-
-                throw ex;
+            {   
+                throw new ActionException( "ERROR ON Util.sendRequestHTTP, SERVER NOT KNOWN CASE - " + ex.getMessage() );
             }
 
             try
@@ -147,15 +125,13 @@ public final class Util
             }
             catch ( Exception ex )
             {
-                output.setOutputMsg( "{\"error\":\"ERROR ON Util.sendRequestHTTP, DATA READ -  " + ex.getMessage() + "\"}" );
-                throw ex;
+                throw new ActionException( "ERROR ON Util.sendRequestHTTP, DATA READ -  " + ex.getMessage() );
             }
 
         }
         catch ( Exception ex )
         {
-            output.setOutputMsg( "{\"error\":\"Failed during sendRequestHTTP: " + ex.getMessage() + "\"}" );
-            throw ex;
+            throw new ActionException( "Failed during sendRequestHTTP: " + ex.getMessage() );
         }
     }
     
@@ -215,11 +191,9 @@ public final class Util
      * **/
     public static JSONArray parseData( String value, String regExp )
     {
-        JSONArray params = new JSONArray();
-        
+        JSONArray params = new JSONArray();   
         Pattern pattern = Pattern.compile( regExp );
         Matcher matcher = pattern.matcher( value );
-        
         while( matcher.find() ) 
         {
             String match = matcher.group();
@@ -229,7 +203,7 @@ public final class Util
             
             // Get key which is in "[xxx]". Ex. {[request].firstName}, get "firstName"
             String key = matcher.group( 2 );
-            
+
             JSONObject param = new JSONObject();
             param.put( "realStr",  match );
             param.put( "param", parameter );

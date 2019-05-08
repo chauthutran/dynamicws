@@ -1,7 +1,6 @@
 package psi.ws.action;
 
-import org.json.JSONObject;
-
+import psi.ws.configuration.Configuration;
 import psi.ws.exception.ActionException;
 
 public abstract class ActionRequest
@@ -12,10 +11,8 @@ public abstract class ActionRequest
 
     abstract public String getRequestType();
     
-    abstract public String getUsername();
+    abstract public Configuration getConfiguration();
     
-    abstract public String getPassword();
-    
-    abstract public String generateRequestURL( JSONObject actionList ) throws ActionException; 
+    abstract public void sendRequest( Action action ) throws ActionException;
     
 }

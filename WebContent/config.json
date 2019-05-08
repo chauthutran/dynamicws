@@ -1,8 +1,14 @@
 {
+	"ACCESS_SERVER_USERNAME": "test123",
+	"ACCESS_SERVER_PASSWORD": "AbCd1234@",
+	"ACCESS_SERVER_NAME": "https://latest.psi-mis.org",
 	
-	"ACCESS_SERVER_USERNAME": "cws.app.",
-	"ACCESS_SERVER_PASSWORD": "j9S4MDxSr8CK5cXB",
-	"ACCESS_SERVER_NAME": "https://latest.psi-mis.org" ,
+	"ACCESS_MONGODB_USERNAME": "tranchau",
+	"ACCESS_MONGODB_PASSWORD": "Test1234",
+	"ACCESS_MONGODB_CLUSTER": "clustertest-xmash.mongodb.net",
+	"ACCESS_MONGODB_DBNAME": "testdb",
+	"ACCESS_MONGODB_COLLECTION": "table1",
+	
 	
 	"ACCESS_SERVER_USERNAME_BACKUP": "system",
 	"ACCESS_SERVER_PASSWORD_BACKUP": "System123",

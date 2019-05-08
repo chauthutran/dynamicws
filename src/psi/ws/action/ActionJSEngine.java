@@ -67,7 +67,7 @@ public class ActionJSEngine
         }
         catch ( ScriptException e )
         {
-            throw new ActionException( "Error when to run actionEval script" );
+            throw new ActionException( "Error when to run actionEval script" + e.getMessage() );
         }
     }
 

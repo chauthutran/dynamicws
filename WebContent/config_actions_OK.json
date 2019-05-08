@@ -1,0 +1,51 @@
+{
+	"actions": {
+		"note1": "{config} - configuration json",
+		"note2": "{payload} - payload json",
+		"note3": "{output} - current action output json",
+		
+		"testPayload_DhisDemoServer" :  {
+		 	"orgUnit": "Rp268JB6Ne4",
+		 	"trackedEntityType": "nEenWmSyUEp",
+		 	"attributes": [{
+		 		"attribute": "w75KJ2mc4zz",
+		 		"value": "First Name 1"
+		 	}]
+		 },
+		 
+		"issueVoucherAction": [
+		   {
+				"name": "_1_ClientCreate",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances",
+				"input": "PAYLOAD",
+				"RESTType": "POST",
+				"actionEval": "if( [OUTPUT].response.status == \"SUCCESS\") { [OUTPUT].trackedEntityInstance = [OUTPUT].response.importSummaries[0].reference; } else { [OUTPUT].errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };",
+				"goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[_2_ClientGet]} : {[_5_END]}"
+			},
+			{
+				"name": "_2_ClientGet",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances/{[_1_ClientCreate].response.importSummaries[0].reference}.json",
+				"RESTType": "GET"
+			},
+			{
+				"name": "_3_ModifyJson",
+				"type": "JS",
+				"actionEval": "var yesterday = Util.getLastNDate(1); yesterday = Util.formatDateObj_DbDateTime(yesterday); _2_ClientGet.created = yesterday;"
+			},
+			{
+				"name": "_4_ClientUpdate",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances/{[_1_ClientCreate].response.importSummaries[0].reference}",
+				"RESTType": "PUT"
+			},
+			{
+				"name": "_5_END",
+				"type": "JS"
+			}
+		]
+
+
+	}
+}

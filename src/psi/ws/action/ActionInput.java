@@ -1,36 +1,34 @@
 package psi.ws.action;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import psi.ws.exception.ActionInputException;
+import psi.ws.exception.ActionException;
 import psi.ws.util.JSONUtil;
 import psi.ws.util.Util;
 
 public class ActionInput
 {
     private static String PARAMS_PAYLOAD = "PAYLOAD";
-    private static String PARAMS_REQUEST = "request";
-    private static String PARAMS_ACTIONNAME = "actionName";
     
-    private static String REGEXP_REQUEST = "\\{\\s*(\\[" + ActionInput.PARAMS_REQUEST + "\\])\\.([^\\}]+)+\\s*\\}";
-    private static String REGEXP_ACTIONNAME = "\\{\\s*\\\"(" + ActionInput.PARAMS_ACTIONNAME + ")\\\"\\s*:\\s*\\\"\\[(\\w+)\\]\\\"\\s*\\}";
+    private static String REGEXP_REQUEST = "\\{\\s*\\[(" + Action.PARAMS_REQUEST + ")\\]\\.([^\\}]+)+\\s*\\}";
+    private static String REGEXP_ACTIONNAME = "\\{\\s*\\\"(" + Action.PARAMS_ACTIONNAME + ")\\\"\\s*:\\s*\\\"\\[(\\w+)\\]\\\"\\s*\\}";
+    private static String REGEXP_ACTIONNAME_PARAMETER = "\\{\\s*\\[(\\w+)\\]\\.([^\\}]+)+\\s*\\}";
     
-    private static JSONObject requestData;
     private String inputStr;
 
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
     
-    public ActionInput( String inputStr, HttpServletRequest request, JSONObject actionList ) throws ActionInputException
+    public ActionInput( String inputStr, JSONObject requestData, JSONObject actionList ) throws ActionException
     {
         super();
 
-        String resolvedInput = resolved( inputStr, request );
-        resolvedInput = resolved( resolvedInput, actionList );
+        // Replace by request data
+        String resolvedInput = resolvedWithRequestData( inputStr, requestData );
+        // Replace by data from action ( ActionOut data )
+        resolvedInput = resolvedWithActionData( resolvedInput, actionList );
       
         this.inputStr = resolvedInput;
     }
@@ -55,7 +53,7 @@ public class ActionInput
     // -------------------------------------------------------------------------
     
     /**
-        @throws ActionInputException 
+        @throws ActionException 
      * @inputStr "PAYLOAD"
         OR
         {
@@ -63,25 +61,22 @@ public class ActionInput
             "lastName": "{[request].lastName}"
         }
     **/
-    private String resolved( String inputStr, HttpServletRequest request ) throws ActionInputException
+    private String resolvedWithRequestData( String inputStr, JSONObject requestData )
     {
         String resolvedInput = inputStr;
         
-        ActionInput.retrieveInputStreamData( request );
-        
-        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, ActionInput.requestData.toString() );
-        JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_REQUEST );
-        
+        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, requestData.toString() );
+        JSONArray parameters = Util.parseData( resolvedInput, ActionInput.REGEXP_REQUEST );
         for( int i = 0; i< parameters.length(); i++ )
         {   
             JSONObject param = parameters.getJSONObject( i );
             String realStr = param.getString( "realStr" );
             String paramKey = param.getString( "param" );
             String jsonPath = param.getString( "key" );
-            if( paramKey.equals( ActionInput.PARAMS_REQUEST ) )
+            if( paramKey.equals( Action.PARAMS_REQUEST ) )
             {
                 String value = JSONUtil.getValueFromJsonPath( requestData, jsonPath );
-                resolvedInput = resolvedInput.replaceAll( realStr, value );
+                resolvedInput = resolvedInput.replace( realStr, value );
             }
         }
         
@@ -89,7 +84,7 @@ public class ActionInput
     }
     
     /** 
-     * @inputStr {"actionName" : "[action_1]"}
+     * @inputStr {"actionName" : "[action_1]"} OR { firstName: {[action_1].response.importSummaries[0].reference}, ... }
      * @return
           --> Result  [
             {
@@ -98,48 +93,55 @@ public class ActionInput
                  "key": action_1
             }
         ]
+     * @throws ActionException 
     **/
-    private String resolved( String inputStr, JSONObject actionList )
+    private String resolvedWithActionData( String inputStr, JSONObject actionList ) throws ActionException
     {
         String resolvedInput = inputStr;
         
         if ( actionList != null && actionList.length() > 0 )
         {
-            JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME );
-            for ( int i = 0; i < parameters.length(); i++ )
+            // {"actionName" : "[action_1]"}  
+            JSONArray parameters1 = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME );
+            for ( int i = 0; i < parameters1.length(); i++ )
             {
-                JSONObject param = parameters.getJSONObject( i );
+                JSONObject param = parameters1.getJSONObject( i );
                 
                 String realStr = param.getString( "realStr" );
                 String paramKey = param.getString( "param" );
                 String actionName = param.getString( "key" );
-                if ( paramKey.equals( ActionInput.PARAMS_ACTIONNAME ) )
+                if ( paramKey.equals( Action.PARAMS_ACTIONNAME ) )
                 {
                     Action action = (Action) actionList.get( actionName );
                     String value = action.getOutput().getOutputMsg();
                     resolvedInput = resolvedInput.replace( realStr, value );
                 }
             }
+            
+            // {[action_1].response.importSummaries[0].reference}
+            JSONArray parameters2 = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME_PARAMETER );
+            for ( int i = 0; i < parameters2.length(); i++ )
+            {
+                JSONObject param = parameters2.getJSONObject( i );
+                
+                String realStr = param.getString( "realStr" );
+                String actionName = param.getString( "param" );
+                String jsonPath = param.getString( "key" );
+
+                Action action = (Action) actionList.get( actionName );
+                if( action != null )
+                {
+                    String value = JSONUtil.getValueFromJsonPath( action.getOutput().getOutputJson(), jsonPath );
+                    resolvedInput = resolvedInput.replace( realStr, value );
+                }
+                else
+                {
+                    throw new ActionException("Cannot find the action with name " + actionName );
+                }
+            }
         }
         
         return resolvedInput;
-    }
-    
-
-    private static void retrieveInputStreamData( HttpServletRequest request ) throws ActionInputException
-    {
-        try
-        {
-            if( requestData == null )
-            {
-                requestData = new JSONObject();
-                requestData = JSONUtil.getJsonFromInputStream( request.getInputStream() );
-            }  
-        }
-        catch( Exception ex )
-        {
-            throw new ActionInputException( ex );
-        }
     }
     
 }

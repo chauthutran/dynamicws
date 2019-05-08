@@ -13,22 +13,18 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-simple-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/org.apache.commons.io.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/apache-commons-lang.jar"/>
 	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-20140107.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/commons-lang3-3.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/asm-1.0.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/asm-3.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-path-2.0.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-smart-2.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/twilio-7.9.1-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/slf4j-simple-1.7.25.jar"/>
+	<classpathentry kind="lib" path="libs/mongo-java-driver-3.9.1.jar"/>
+	<classpathentry kind="lib" path="libs/org.apache.commons.io.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.25.jar"/>
+	<classpathentry kind="lib" path="libs/asm-1.0.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

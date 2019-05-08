@@ -1,0 +1,258 @@
+{
+	"actions": {
+		"note1": "{config} - configuration json",
+		"note2": "{payload} - payload json",
+		"note3": "{output} - current action output json",
+
+		"issueVoucherPayLoad": {
+			"client": {
+				"firstName": "J1MZFirstT1",
+				"lastName": "IFMZLastT1",
+				"program": "IFPP-REG",
+				"gender": "M",
+				"motherName": "MOM",
+				"birthProvince": "MZ10",
+				"birthDate": "1990-12-31",
+				"birthOrder": "2",
+				"age": "28",
+				"noOfLivingChildren": "1",
+				"currentMethod": "PIL",
+				"channelOfReferral": "HF",
+				"civilStatus": "MAR",
+				"nextVisit": "6",
+				"phoneOwnership": "HER",
+				"phoneNumber": "+258848373789",
+				"phoneContactConsent": "YESP",
+				"dataValues": {
+					"program": "FPL"
+				}
+			},
+			"voucher": {
+				"code": "41848884",
+				"program": "FPL",
+				"dataValues": {
+					"currentMethod": "PIL"
+				}
+			}
+		},
+
+
+		"issueVoucherAction": [{
+				"name": "prepareClientData",
+				"type": "JS",
+				"input": {
+					"trackedEntityType": "XV3kldsZq0H",
+					"orgUnit": "ZUF1vSkQaB0",
+					"attributes": [{
+						"attribute": "rw3W9pDCPb2",
+						"value": "91J3st10F2"
+					}, {
+						"attribute": "nR9d9xZ5TRJ",
+						"value": "{[request].client.firstName}"
+					}, {
+						"attribute": "RsvOTmR2DjO",
+						"value": "{[request].client.lastName}"
+					}, {
+						"attribute": "pL3gzBBWOhh",
+						"value": "{[request].client.birthProvince}"
+					}, {
+						"attribute": "sUu9QuzgS1Y",
+						"value": "{[request].client.birthOrder}"
+					}, {
+						"attribute": "JcGai6pHG1M",
+						"value": "{[request].client.gender}"
+					}, {
+						"attribute": "JM9qqwDihBV",
+						"value": "{[request].client.age}"
+					}, {
+						"attribute": "wSp6Q7QDMsk",
+						"value": "{[request].client.birthDate}"
+					}, {
+						"attribute": "P01PEz2ikrY",
+						"value": "{[request].client.phoneOwnership}"
+					}, {
+						"attribute": "uwjJhJ6kjN6",
+						"value": "{[request].client.phoneNumber}"
+					}, {
+						"attribute": "OdKxvdYZXMU",
+						"value": "{[request].client.phoneContactConsent}"
+					}, {
+						"attribute": "K5PX96b7e5l",
+						"value": "{[request].client.channelOfReferral}"
+					}],
+					"enrollments": [{
+						"orgUnit": "ZUF1vSkQaB0",
+						"program": "A7SRy7lpk1x"
+					}]
+				},
+				"actionEval": "[OUTPUT].enrollments[0].enrollmentDate = Util.getLastNDbDate( 1 ); [OUTPUT].enrollments[0].incidentDate = Util.getLastNDbDate( 1 );"
+			},
+			{
+				"name": "createClient",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances",
+				"RESTType": "POST",
+				"actionEval": "if( [OUTPUT].response.status == \"SUCCESS\") { [OUTPUT].trackedEntityInstance = [OUTPUT].response.importSummaries[0].reference; } else { [OUTPUT].errorMsg = '{ERROR}-Client Create Failed: {OUT_ERR}' };",
+				"goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[prepareVoucherData]} : {[END]}"
+			},
+			{
+				"name": "prepareVoucherData",
+				"type": "JS",
+				"input": {
+					"trackedEntityType": "HzBZpOzuzGq",
+					"orgUnit": "ZUF1vSkQaB0",
+					"attributes": [{
+						"attribute": "RJO3VHQVIvh",
+						"value": "{[request].voucher.code}"
+					}, {
+						"attribute": "Hq7B5uDZRwi",
+						"value": "{[request].voucher.program}"
+					}, {
+						"attribute": "SWfQZGMnQ5I",
+						"value": "Electronic"
+					}, {
+						"attribute": "Ky6tDzaFH1T",
+						"value": "2019-05-31"
+					}, {
+						"attribute": "KRdnyGwNZyW",
+						"value": "ISS"
+					}, {
+						"attribute": "kvX6wGkhagZ",
+						"value": "J3MZFirst C"
+					}, {
+						"attribute": "uwjJhJ6kjN6",
+						"value": "{[request].client.phoneNumber}"
+					}, {
+						"attribute": "OdKxvdYZXMU",
+						"value": "{[request].client.phoneContactConsent}"
+					}, {
+						"attribute": "L34MRrwU2g0",
+						"value": "{[createClient].response.importSummaries[0].reference}"
+					}],
+					"enrollments": [{
+						"orgUnit": "ZUF1vSkQaB0",
+						"program": "PIYbqsRwTBx"
+					}]
+				},
+				"actionEval": "var today = Util.getLastNDbDate( 1 ); [OUTPUT].attributes.push({\"attribute\": \"XBTcG9aXwak\",\"value\": today }); [OUTPUT].enrollments[0].enrollmentDate = today; [OUTPUT].enrollments[0].incidentDate = today;"
+			},
+			{
+				"name": "createVoucher",
+				"type": "DHIS",
+				"URL": "/api/trackedEntityInstances",
+				"RESTType": "POST",
+				"goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[createRelationship]} : {[END]}"
+			},
+			{
+				"name": "createRelationship",
+				"type": "DHIS",
+				"URL": "/api/relationships",
+				"input": {
+					"relationships": [{
+						"relationshipType": "QTJ87COS3zQ",
+						"from": {
+							"trackedEntityInstance": {
+								"programOwners": [],
+								"trackedEntityInstance": "{[createVoucher].response.importSummaries[0].reference}"
+							}
+						},
+						"to": {
+							"trackedEntityInstance": {
+								"programOwners": [],
+								"trackedEntityInstance": "{[createClient].response.importSummaries[0].reference}"
+							}
+						}
+					}, {
+						"relationshipType": "MSGFabFCBFu",
+						"from": {
+							"trackedEntityInstance": {
+								"programOwners": [],
+								"trackedEntityInstance": "{[createClient].response.importSummaries[0].reference}"
+							}
+						},
+						"to": {
+							"trackedEntityInstance": {
+								"programOwners": [],
+								"trackedEntityInstance": "{[createVoucher].response.importSummaries[0].reference}"
+							}
+						}
+					}]
+				},
+				"RESTType": "POST",
+				"goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[prepareClientEvent]} : {[END]}"
+			},
+			{
+				"name": "prepareClientEvent",
+				"type": "JS",
+				"input": {
+					"programStage": "G3HhsA7BiNs",
+					"dataValues": [{
+						"dataElement": "jjhgtSl7tlA",
+						"value": "ISS"
+					}, {
+						"dataElement": "PmTQIkFdbUO",
+						"value": "{[request].client.dataValues.program}"
+					}, {
+						"dataElement": "oYZjCqkj1wh",
+						"value": "10"
+					}, {
+						"dataElement": "kken0c5moOw",
+						"value": "{[request].voucher.code}"
+					}],
+					"orgUnit": "ZUF1vSkQaB0",
+					"program": "A7SRy7lpk1x",
+					"trackedEntityInstance": "{[createClient].response.importSummaries[0].reference}",
+					"status": "ACTIVE"
+				},
+				"actionEval": "[OUTPUT].eventDate = Util.getLastNDbDate( 1 );"
+			},
+			{
+				"name": "createClientEvent",
+				"type": "DHIS",
+				"URL": "/api/events",
+				"RESTType": "POST",
+				"goTo": "( [OUTPUT].response.status == \"SUCCESS\" ) ? {[prepareVoucherEvent]} : {[END]}"
+			},
+			{
+				"name": "prepareVoucherEvent",
+				"type": "JS",
+				"input": {
+					"programStage": "m0Btps6lG5R",
+					"dataValues": [{
+						"dataElement": "jjhgtSl7tlA",
+						"value": "ISS"
+					}, {
+						"dataElement": "cLuqhHgD7LV",
+						"value": "{[request].voucher.dataValues.currentMethod}"
+					}, {
+						"dataElement": "oYZjCqkj1wh",
+						"value": "10"
+					}, {
+						"dataElement": "MzjA6i3SfBZ",
+						"value": "android; configVersion(dcJson):"
+					}, {
+						"dataElement": "Hi5gBfyA11C",
+						"value": "0"
+					}],
+					"orgUnit": "ZUF1vSkQaB0",
+					"program": "PIYbqsRwTBx",
+					"trackedEntityInstance": "{[createVoucher].response.importSummaries[0].reference}",
+					"status": "ACTIVE"
+				},
+				"actionEval": "[OUTPUT].eventDate = Util.getLastNDbDate( 1 );"
+			},
+			{
+				"name": "createVoucherEvent",
+				"type": "DHIS",
+				"URL": "/api/events",
+				"RESTType": "POST",
+			},
+			{
+				"name": "END",
+				"type": "JS"
+			}
+		]
+
+
+	}
+}

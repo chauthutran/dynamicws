@@ -10,17 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import psi.ws.configuration.Configuration;
 import psi.ws.exception.ActionException;
 import psi.ws.util.JSONUtil;
 import psi.ws.util.Util;
 
 public class ActionSet
 {
+    
     private HttpServletRequest httpRequest;
     private HttpServletResponse httpResponse;
+    
     private Configuration configuration;
     private ActionJSEngine actionJSEngine;
 
+    private JSONObject requestData;
     private List<Action> ranActions;
     private JSONObject ranActionsByName; // list of actions by name
     
@@ -29,20 +33,24 @@ public class ActionSet
     // Constructor
     // -------------------------------------------------------------------------
     
-    public ActionSet( HttpServletRequest request, HttpServletResponse response, String actionKey )
+    public ActionSet( HttpServletRequest httpRequest, HttpServletResponse httpResponse, String actionKey )
     {
         try
         {
-            this.httpRequest = request;
-            this.httpResponse = response;
+            this.httpRequest = httpRequest;
+            this.httpResponse = httpResponse;
+            
             this.ranActions = new ArrayList<Action>();
             this.ranActionsByName = new JSONObject();
 
+            
             // 1. Configuration Class instantiate
-            configuration = new Configuration( request, actionKey );
+            this.configuration = new Configuration( this.httpRequest, actionKey );
+            
+            this.requestData = retrieveInputStreamData();
 
             // 2. jsEngine
-            actionJSEngine = new ActionJSEngine( request );
+            actionJSEngine = new ActionJSEngine( this.httpRequest );
 
             // 3. Add "index" property for each action configuration
             resolveConfigActionList();
@@ -50,11 +58,11 @@ public class ActionSet
         }
         catch ( ActionException ex )
         {
-            writeErrorMsg( ex, response );
+            writeData( httpResponse, ex );
         }
         catch ( ScriptException ex )
         {
-            writeErrorMsg( ex, response );
+            writeData( httpResponse, ex );
         }
     }
 
@@ -71,7 +79,7 @@ public class ActionSet
         }
         catch ( ActionException ex )
         {
-            writeErrorMsg( ex, this.httpResponse );
+            writeData( httpResponse, ex );
         }
 
     }
@@ -119,35 +127,32 @@ public class ActionSet
         return null;
     }
 
-
+    private Action createAction( String actionName ) throws ActionException
+    {
+        // Get configuration action by name
+        JSONObject configAction = JSONUtil.getJsonObject( this.configuration.getConfigActionList(), "name", actionName );
+        
+        // Create Action object
+        return new Action( configAction
+            , this.requestData
+            , ranActions
+            , ranActionsByName
+            , actionJSEngine
+            , this.configuration );
+    }
+    
     private void runActions()
         throws ActionException
     {
-        String server = this.configuration.getServer();
-        String username = this.configuration.getUsername();
-        String password = this.configuration.getPassword();
-
         String nextActionName = getFirstActionName();
         while ( nextActionName != null )
         {
-            // Get next action by name
-            JSONObject configAction = JSONUtil.getJsonObject( this.configuration.getConfigActionList(), "name",
-                nextActionName );
-
-            // Get lastAction in ran action list
-            Action lastAction = getLastActionInRanList();
-
             // Create the action object
-            Action action = new Action( this.httpRequest, configAction, lastAction, this.ranActionsByName,
-                actionJSEngine, server, username, password );
-
+            Action action = this.createAction( nextActionName );
+            
             // Run action
             action.run( ranActionsByName );
             
-            // Put the ran action in list
-            this.ranActions.add( action );
-            this.ranActionsByName.put( action.getName(), action );
-
             // Get next action
             nextActionName = action.getGoTo().getNextActionName( this.configuration.getConfigActionList(),
                 action.getOutput() );  
@@ -155,7 +160,7 @@ public class ActionSet
 
         try
         {
-            Util.respondMsgOut( getLastActionInRanList().getOutput(), httpResponse );
+            writeData( httpResponse, null );
         }
         catch ( Exception e )
         {
@@ -164,14 +169,35 @@ public class ActionSet
 
     }
 
-    private void writeErrorMsg( Exception e, HttpServletResponse response )
+    private void writeData( HttpServletResponse response, Exception e )
     {
         try
         {
-            JSONObject errData = new JSONObject();
-            errData.put( "errMsg", e.getMessage() );
+            JSONObject resultData = new JSONObject();
+            if( e != null )
+            {
+                resultData.put( "finalErrorMsg", e.getMessage() );
+            }
+            else
+            {
+                Action lastAction = this.getLastActionInRanList();
+                if( lastAction != null )
+                {
+                    resultData.put( "finalSuccessMsg", lastAction.getOutput().getOutputJson() );
+                }
+            }
+            
+            JSONArray processed = new JSONArray();
+            for( int i = 0; i < this.ranActions.size(); i++ )
+            {
+                Action action = this.ranActions.get( i );
+                JSONObject output = action.getOutput().getOutputJson();
+                output.put( "actionName", action.getName() );
+                processed.put( output);
+            }
+            resultData.put( "details", processed );
 
-            ActionOutput output = new ActionOutput( errData.toString(), 200 );
+            ActionOutput output = new ActionOutput( resultData.toString(), 200 );
             Util.respondMsgOut( output, response );
         }
         catch ( Exception ex )
@@ -181,4 +207,21 @@ public class ActionSet
 
     }
 
+    private JSONObject retrieveInputStreamData() throws ActionException
+    {
+        JSONObject requestData = new JSONObject();
+        
+        try
+        {
+            requestData = JSONUtil.getJsonFromInputStream( httpRequest.getInputStream() );
+        }
+        catch( Exception ex )
+        {
+            throw new ActionException( "Fail to get data from request" );
+        }
+        
+        return requestData;
+        
+    }
+    
 }
