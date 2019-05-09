@@ -9,9 +9,7 @@ public class ActionOutput
     private int responseCode = 200;
 
     private String actionEval;
-
     private String outputMsg = "";
-
     ActionJSEngine actionJsEngine;
 
     // -------------------------------------------------------------------------

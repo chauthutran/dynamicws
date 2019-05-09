@@ -36,16 +36,6 @@ public class Action
     // Constructors
     // -------------------------------------------------------------------------
     
-    public Action( String name, JSONObject httpRequestData, ActionInput input, ActionRequest request, ActionGoTo goTo )
-    {
-        super();
-        this.name = name;
-        this.input = input;
-        this.request = request;
-        this.goTo = goTo;
-    }
-    
-    
     /** {
         "name": "1_ClientCreate",
         "type": "DhisApi",

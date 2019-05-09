@@ -101,43 +101,63 @@ public class ActionInput
         
         if ( actionList != null && actionList.length() > 0 )
         {
-            // {"actionName" : "[action_1]"}  
-            JSONArray parameters1 = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME );
-            for ( int i = 0; i < parameters1.length(); i++ )
-            {
-                JSONObject param = parameters1.getJSONObject( i );
-                
-                String realStr = param.getString( "realStr" );
-                String paramKey = param.getString( "param" );
-                String actionName = param.getString( "key" );
-                if ( paramKey.equals( Action.PARAMS_ACTIONNAME ) )
-                {
-                    Action action = (Action) actionList.get( actionName );
-                    String value = action.getOutput().getOutputMsg();
-                    resolvedInput = resolvedInput.replace( realStr, value );
-                }
-            }
+            // {"actionName" : "[action_1]"}
+            resolvedInput = resolvedWithActionName( resolvedInput, actionList );
             
             // {[action_1].response.importSummaries[0].reference}
-            JSONArray parameters2 = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME_PARAMETER );
-            for ( int i = 0; i < parameters2.length(); i++ )
+            resolvedInput = resolvedWithActionParametter( resolvedInput, actionList);
+        }
+        
+        return resolvedInput;
+    }
+    
+    // {"actionName" : "[action_1]"}
+    private String resolvedWithActionName( String inputStr, JSONObject actionList ) throws ActionException
+    {
+        String resolvedInput = inputStr;
+    
+        JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME );
+        for ( int i = 0; i < parameters.length(); i++ )
+        {
+            JSONObject param = parameters.getJSONObject( i );
+            
+            String realStr = param.getString( "realStr" );
+            String paramKey = param.getString( "param" );
+            String actionName = param.getString( "key" );
+            if ( paramKey.equals( Action.PARAMS_ACTIONNAME ) )
             {
-                JSONObject param = parameters2.getJSONObject( i );
-                
-                String realStr = param.getString( "realStr" );
-                String actionName = param.getString( "param" );
-                String jsonPath = param.getString( "key" );
-
                 Action action = (Action) actionList.get( actionName );
-                if( action != null )
-                {
-                    String value = JSONUtil.getValueFromJsonPath( action.getOutput().getOutputJson(), jsonPath );
-                    resolvedInput = resolvedInput.replace( realStr, value );
-                }
-                else
-                {
-                    throw new ActionException("Cannot find the action with name " + actionName );
-                }
+                String value = action.getOutput().getOutputMsg();
+                resolvedInput = resolvedInput.replace( realStr, value );
+            }
+        }
+        
+        return resolvedInput;
+    }
+    
+    // {[action_1].response.importSummaries[0].reference}
+    private String resolvedWithActionParametter( String inputStr, JSONObject actionList ) throws ActionException
+    {
+        String resolvedInput = inputStr;
+        
+        JSONArray parameters = Util.parseData( inputStr, ActionInput.REGEXP_ACTIONNAME_PARAMETER );
+        for ( int i = 0; i < parameters.length(); i++ )
+        {
+            JSONObject param = parameters.getJSONObject( i );
+            
+            String realStr = param.getString( "realStr" );
+            String actionName = param.getString( "param" );
+            String jsonPath = param.getString( "key" );
+
+            Action action = (Action) actionList.get( actionName );
+            if( action != null )
+            {
+                String value = JSONUtil.getValueFromJsonPath( action.getOutput().getOutputJson(), jsonPath );
+                resolvedInput = resolvedInput.replace( realStr, value );
+            }
+            else
+            {
+                throw new ActionException("Cannot find the action with name " + actionName );
             }
         }
         

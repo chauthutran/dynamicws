@@ -78,7 +78,7 @@ public final class Util
             {
                 con.setRequestProperty( "Content-Type", "application/json; charset=utf-8" );
 
-                String userpass = request.getConfiguration().getUsername() + ":" + request.getConfiguration().getPassword();
+                String userpass = request.getConfiguration().getWebServiceConfig().getUsername() + ":" + request.getConfiguration().getWebServiceConfig().getPassword();
                 String basicAuth = "Basic " + new String( new Base64().encode( userpass.getBytes() ) );
                 con.setRequestProperty( "Authorization", basicAuth );
             }
