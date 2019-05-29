@@ -5,7 +5,7 @@
 	
 	"ACCESS_MONGODB_USERNAME": "tranchau",
 	"ACCESS_MONGODB_PASSWORD": "Test1234",
-	"ACCESS_MONGODB_CLUSTER": "clusterrodolfo1-uvudw.mongodb.net",
+	"ACCESS_MONGODB_CLUSTER": "cluster0-xmash.mongodb.net",
 	"ACCESS_MONGODB_DBNAME": "db1",
 	"ACCESS_MONGODB_COLLECTION": "table1",
 	

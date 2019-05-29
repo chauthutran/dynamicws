@@ -25,6 +25,7 @@
 					"phoneOwnership": "HER",
 					"phoneNumber": "+258848373789",
 					"phoneContactConsent": "YESP",
+					"city" : "city_1",
 					"dataValues": {
 						"program": "FPL"
 					}
@@ -32,6 +33,7 @@
 				"voucher": {
 					"code": "41848884",
 					"program": "FPL",
+					"ipcOrgUnitId": "ZUF1vSkQaB0",
 					"dataValues": {
 						"currentMethod": "PIL"
 					}
@@ -39,6 +41,16 @@
 			},
 			"issueVoucherAction_Exchange": {
 				"trackedEntityInstance": "xHX7zrMcRTM"
+			},
+			
+			"getMongoData" : {
+				"conditions": [
+					{
+						"key" : "",
+						"value" : "",
+						"operator" : ""
+					}
+				]
 			}
 		},
 
@@ -261,25 +273,27 @@
 				"name": "prepareData",
 				"type": "JS",
 				"input": {
-					clientDetails :{
-						firstName : "{[request].client.firstName}",
-						lastName : "{[request].client.lastName}",
-						phoneNumber : "{[request].client.phoneNumber}",
-						CUIC : "CUIC0000002",
-						gender : "{[request].client.gender}",
-						phoneOwnership : "{[request].client.phoneOwnership}",
-						enrollmentChannel : "{[request].client.program}",
-						householDelivery : "{[request].client.householDelivery}",
-						birthDate : "{[request].client.birthDate}"
+					"ipcOrgUnitId" : "{[request].voucher.ipcOrgUnitId}",
+					"clientDetails" :{
+						"firstName" : "{[request].client.firstName}",
+						"lastName" : "{[request].client.lastName}",
+						"phoneNumber" : "{[request].client.phoneNumber}",
+						"CUIC" : "CUIC0000002",
+						"gender" : "{[request].client.gender}",
+						"phoneOwnership" : "{[request].client.phoneOwnership}",
+						"enrollmentChannel" : "{[request].client.program}",
+						"householDelivery" : "{[request].client.householDelivery}",
+						"birthDate" : "{[request].client.birthDate}",
+						"city" : "{[request].client.city}",
 					},
-					clientId : "ID1555043530240",
-					transactions : [
+					"clientId" : "ID1555043530240",
+					"transactions" : [
 						{
-							program: "{[request].voucher.program}",
-							dateTime : "2019-04-12T13:32:10",
-							currentStatus : "ISS",
-							type : "voucher",
-							value : "{[request].voucher.code}"
+							"program" : "{[request].voucher.program}",
+							"dateTime" : "2019-04-12T13:32:10",
+							"currentStatus" : "ISS",
+							"type" : "voucher",
+							"value" : "{[request].voucher.code}"
 						}
 					]
 				}
@@ -307,7 +321,7 @@
 			{
 				"name": "PrepareData",
 				"type": "JS",
-				"actionEval": "var mongoData = {}; mongoData.clientDetails = {}; mongoData.transactions = []; var attributes = GetClient.attributes; mongoData.clientDetails.firstName = Util.findItemFromList ( attributes, \"attribute\", \"nR9d9xZ5TRJ\" ).value; mongoData.clientDetails.lastName = Util.findItemFromList ( attributes, \"attribute\", \"RsvOTmR2DjO\" ).value; mongoData.clientDetails.phoneNumber = Util.findItemFromList( attributes, \"attribute\", \"uwjJhJ6kjN6\" ).value; mongoData.clientDetails.gender = Util.findItemFromList( attributes, \"attribute\", \"JcGai6pHG1M\" ).value; mongoData.clientDetails.phoneOwnership = Util.findItemFromList( attributes, \"attribute\", \"P01PEz2ikrY\" ).value; mongoData.clientDetails.enrollmentChannel = Util.findItemFromList( attributes, \"attribute\", \"K5PX96b7e5l\" ).value; mongoData.clientDetails.birthDate = Util.findItemFromList( attributes, \"attribute\", \"sUu9QuzgS1Y\" ).value; mongoData.clientDetails.clientId = Util.findItemFromList( attributes, \"attribute\", \"rw3W9pDCPb2\" ).value; attributes = GetVoucher.attributes; var voucherEnrollments = GetVoucher.enrollments; for( var j in voucherEnrollments ){ var transaction = {}; 	 transaction.dateTime = Util.findItemFromList( attributes, \"attribute\", \"KRdnyGwNZyW\" ).lastUpdated; transaction.type = \"voucher\"; transaction.currentStatus = Util.findItemFromList( attributes, \"attribute\", \"KRdnyGwNZyW\" ).value; transaction.value = Util.findItemFromList( attributes, \"attribute\", \"RJO3VHQVIvh\" ).value;  transaction.statusHistory = []; var voucherEvents = GetVoucher.enrollments[j].events; for( var i=0;i<voucherEvents.length; i++ ){ var history = {};  var event = voucherEvents[i]; history.dateTime = event.eventDate; history.status = Util.findItemFromList ( event.dataValues, \"dataElement\", \"jjhgtSl7tlA\" ).value; transaction.statusHistory.push( JSON.parse( JSON.stringify( history ) ) ); } mongoData.transactions.push( JSON.parse( JSON.stringify( transaction ) ) ); }[OUTPUT]=mongoData; "
+				"actionEval": "var mongoData = {}; mongoData.clientDetails = {}; mongoData.transactions = []; var attributes = GetClient.attributes; mongoData.clientDetails.firstName = Util.findItemFromList ( attributes, \"attribute\", \"nR9d9xZ5TRJ\" ).value; mongoData.clientDetails.lastName = Util.findItemFromList ( attributes, \"attribute\", \"RsvOTmR2DjO\" ).value; mongoData.clientDetails.phoneNumber = Util.findItemFromList( attributes, \"attribute\", \"uwjJhJ6kjN6\" ).value; mongoData.clientDetails.gender = Util.findItemFromList( attributes, \"attribute\", \"JcGai6pHG1M\" ).value; mongoData.clientDetails.phoneOwnership = Util.findItemFromList( attributes, \"attribute\", \"P01PEz2ikrY\" ).value; mongoData.clientDetails.enrollmentChannel = Util.findItemFromList( attributes, \"attribute\", \"K5PX96b7e5l\" ).value; mongoData.clientDetails.birthDate = Util.findItemFromList( attributes, \"attribute\", \"sUu9QuzgS1Y\" ).value; mongoData.clientDetails.clientId = Util.findItemFromList( attributes, \"attribute\", \"rw3W9pDCPb2\" ).value; attributes = GetVoucher.attributes; var voucherEnrollments = GetVoucher.enrollments; for( var j in voucherEnrollments ){ var transaction = {};transaction.dateTime = Util.findItemFromList( attributes, \"attribute\", \"KRdnyGwNZyW\" ).lastUpdated; transaction.type = \"voucher\"; transaction.currentStatus = Util.findItemFromList( attributes, \"attribute\", \"KRdnyGwNZyW\" ).value; transaction.value = Util.findItemFromList( attributes, \"attribute\", \"RJO3VHQVIvh\" ).value;  transaction.statusHistory = []; var voucherEvents = GetVoucher.enrollments[j].events; for( var i=0;i<voucherEvents.length; i++ ){ var history = {};  var event = voucherEvents[i]; history.dateTime = event.eventDate; history.status = Util.findItemFromList ( event.dataValues, \"dataElement\", \"jjhgtSl7tlA\" ).value; transaction.statusHistory.push( JSON.parse( JSON.stringify( history ) ) ); } mongoData.transactions.push( JSON.parse( JSON.stringify( transaction ) ) ); }[OUTPUT]=mongoData; "
 			},
 			{
 				"name": "SaveData",
@@ -315,6 +329,16 @@
 				"RESTType": "POST"
 			}
 		]
+		
+		
+		,"getMongoData": [{
+				"name": "GetData",
+				"type": "MONGO",
+				"input" : "PAYLOAD",
+				"RESTType": "GET"
+			}
+		]
+		
 	}
 
 
