@@ -17,18 +17,14 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-import com.mongodb.util.JSON;
 
 public class MongoConnection
 {
@@ -41,7 +37,12 @@ public class MongoConnection
     {
         this.configuration = configuration.getMongodbConfig();
     }
-
+ 
+    public MongoConnection( Configuration configuration, String username, String password, String cluster, String dbname, String collectionName )
+    {
+        configuration.setUpMongodbConfig( username, password, cluster, dbname, collectionName );
+        this.configuration = configuration.getMongodbConfig();
+    }
     
     // -------------------------------------------------------------------------
     // Methods

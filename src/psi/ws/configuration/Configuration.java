@@ -35,11 +35,6 @@ public class Configuration
     // Getters
     // -------------------------------------------------------------------------
 
-    public MongodbConfiguration getMongodbConfig()
-    {
-        return mongodbConfig;
-    }
-
     public WebServiceConfiguration getWebServiceConfig()
     {
         return webServiceConfig;
@@ -50,6 +45,16 @@ public class Configuration
         return configActionList;
     }
 
+    public MongodbConfiguration getMongodbConfig()
+    {
+        return mongodbConfig;
+    }
+
+    public void setUpMongodbConfig( String username, String password, String cluster, String dbname, String collectionName )
+    {
+        this.mongodbConfig = new MongodbConfiguration( username, password, cluster, dbname, collectionName );
+    }
+    
     // -------------------------------------------------------------------------
     // Supportive methods
     // -------------------------------------------------------------------------

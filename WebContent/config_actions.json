@@ -6,51 +6,64 @@
 
 		"payload": {
 			"issueVoucherPayLoad_DHIS_AND_Mongo": {
-				"client": {
-					"firstName": "J1MZFirstT1",
-					"lastName": "IFMZLastT1",
-					"program": "IFPP-REG",
-					"gender": "M",
-					"motherName": "MOM",
-					"birthProvince": "MZ10",
-					"birthDate": "1990-12-31",
-					"birthOrder": "2",
-					"age": "28",
-					"noOfLivingChildren": "1",
-					"currentMethod": "PIL",
-					"channelOfReferral": "HF",
-					"civilStatus": "MAR",
-					"nextVisit": "6",
-					"householDelivery": "YES-Microlut",
-					"phoneOwnership": "HER",
-					"phoneNumber": "+258848373789",
-					"phoneContactConsent": "YESP",
-					"city" : "city_1",
-					"dataValues": {
-						"program": "FPL"
-					}
-				},
-				"voucher": {
-					"code": "41848884",
-					"program": "FPL",
-					"ipcOrgUnitId": "ZUF1vSkQaB0",
-					"dataValues": {
-						"currentMethod": "PIL"
+				"payload" : {
+					"client": {
+						"firstName": "J1MZFirstT1",
+						"lastName": "IFMZLastT1",
+						"program": "IFPP-REG",
+						"gender": "M",
+						"motherName": "MOM",
+						"birthProvince": "MZ10",
+						"birthDate": "1990-12-31",
+						"birthOrder": "2",
+						"age": "28",
+						"noOfLivingChildren": "1",
+						"currentMethod": "PIL",
+						"channelOfReferral": "HF",
+						"civilStatus": "MAR",
+						"nextVisit": "6",
+						"householDelivery": "YES-Microlut",
+						"phoneOwnership": "HER",
+						"phoneNumber": "+258848373789",
+						"phoneContactConsent": "YESP",
+						"city" : "city_1",
+						"dataValues": {
+							"program": "FPL"
+						}
+					},
+					"voucher": {
+						"code": "41848884",
+						"program": "FPL",
+						"ipcOrgUnitId": "ZUF1vSkQaB0",
+						"dataValues": {
+							"currentMethod": "PIL"
+						}
 					}
 				}
 			},
 			"issueVoucherAction_Exchange": {
-				"trackedEntityInstance": "xHX7zrMcRTM"
+				"payload" : {
+					"trackedEntityInstance": "xHX7zrMcRTM"
+				}
 			},
 			
 			"getMongoData" : {
-				"conditions": [
-					{
-						"key" : "",
-						"value" : "",
-						"operator" : ""
-					}
-				]
+				"payload" : {
+					"conditions": [
+						{
+							"key" : "",
+							"value" : "",
+							"operator" : ""
+						}
+					]
+				},
+				"config": {
+					"username": "tranchau",
+					"password": "Test1234",
+					"cluster": "clusterjames1-uvudw.mongodb.net",
+					"dbName": "db1",
+					"collectionName": "table1"
+				}
 			}
 		},
 

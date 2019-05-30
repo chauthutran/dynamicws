@@ -16,6 +16,7 @@ public class ActionInput
     private static String REGEXP_ACTIONNAME_PARAMETER = "\\{\\s*\\[(\\w+)\\]\\.([^\\}]+)+\\s*\\}";
     
     private String inputStr;
+    private JSONObject overwriteConfigutation;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -30,6 +31,12 @@ public class ActionInput
         // Replace by data from action ( ActionOut data )
         resolvedInput = resolvedWithActionData( resolvedInput, actionList );
       
+        // 
+        if( requestData.has( "config" ) )
+        {
+            overwriteConfigutation = requestData.getJSONObject( "config" );
+        }
+        
         this.inputStr = resolvedInput;
     }
 
@@ -46,26 +53,36 @@ public class ActionInput
     {
         return this.inputStr;
     }
-    
+
+    public JSONObject getOverwriteConfigutation()
+    {
+        return overwriteConfigutation;
+    }
 
     // -------------------------------------------------------------------------
     // Supportive methods
     // -------------------------------------------------------------------------
     
+
     /**
         @throws ActionException 
      * @inputStr "PAYLOAD"
-        OR
-        {
-            "firstName": "{[request].firstName}",
-            "lastName": "{[request].lastName}"
+     *  {
+            "payload": {
+                "firstName": "{[request].firstName}",
+                "lastName": "{[request].lastName}"
+            }
+        // , ... another configuration
         }
+
+        OR
+        
     **/
     private String resolvedWithRequestData( String inputStr, JSONObject requestData )
     {
         String resolvedInput = inputStr;
         
-        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, requestData.toString() );
+        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, requestData.getJSONObject( "payload" ).toString() );
         JSONArray parameters = Util.parseData( resolvedInput, ActionInput.REGEXP_REQUEST );
         for( int i = 0; i< parameters.length(); i++ )
         {   

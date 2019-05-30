@@ -25,7 +25,6 @@ public class ActionMongodbRequest extends ActionRequest
     {
         this.requestType = requestType;
         this.configuration = configuration;
-        this.connection = new MongoConnection( configuration );
     }
     
     // -------------------------------------------------------------------------
@@ -52,6 +51,21 @@ public class ActionMongodbRequest extends ActionRequest
     @Override
     public void sendRequest( Action action ) throws ActionException
     {
+        if( action.getInput().getOverwriteConfigutation() == null )
+        {
+            this.connection = new MongoConnection( this.configuration );
+        }
+        else
+        {
+            JSONObject config = action.getInput().getOverwriteConfigutation();
+            
+            String username = config.getString( "username" );
+            String password = config.getString( "password" ); 
+            String cluster = config.getString( "cluster" ); 
+            String dbName = config.getString( "dbName" ); 
+            String collectionName = config.getString( "collectionName" );
+            this.connection = new MongoConnection( this.configuration, username, password, cluster ,dbName, collectionName );
+        }
         this.connection.open();
         
         if( this.requestType.equals( Util.REQUEST_TYPE_POST ))
