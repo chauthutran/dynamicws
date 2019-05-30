@@ -2,30 +2,6 @@
     <wb-module deploy-name="eReferralsApp">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="json-20140107.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-20140107.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="json-path-2.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-path-2.0.0.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="json-smart-2.1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-smart-2.1.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mongo-java-driver-3.9.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/mongo-java-driver-3.9.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="org.apache.commons.io.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/org.apache.commons.io.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="slf4j-api-1.7.25.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/slf4j-api-1.7.25.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="slf4j-simple-1.7.25.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/slf4j-simple-1.7.25.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="asm-1.0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/cthut/Documents/GitHub/dynamicws/libs/asm-1.0.2.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="java-output-path" value="/eReferralsApp/build/classes"/>
         <property name="context-root" value="eReferralsApp"/>
     </wb-module>
