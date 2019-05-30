@@ -51,6 +51,11 @@ public class ActionMongodbRequest extends ActionRequest
     @Override
     public void sendRequest( Action action ) throws ActionException
     {
+        
+        JSONObject dtRecord_actionJson = new JSONObject();
+        DateTimeRecord dtRecord_Overall = new DateTimeRecord( "[L0]OVERALL" );
+        
+        
         if( action.getInput().getOverwriteConfigutation() == null )
         {
             this.connection = new MongoConnection( this.configuration );
@@ -91,6 +96,9 @@ public class ActionMongodbRequest extends ActionRequest
             result.put( "result", list );
             action.getOutput().setOutputMsg( result.toString() );
         }
+        
+        dtRecord_Overall.addTimeMark_WtCount( dtRecord_actionJson ); 
+        System.out.println( dtRecord_actionJson.toString() );
         
         this.connection.close();
     }
