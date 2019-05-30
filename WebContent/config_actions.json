@@ -297,7 +297,7 @@
 						"enrollmentChannel" : "{[request].client.program}",
 						"householDelivery" : "{[request].client.householDelivery}",
 						"birthDate" : "{[request].client.birthDate}",
-						"city" : "{[request].client.city}",
+						"city" : "{[request].client.city}"
 					},
 					"clientId" : "ID1555043530240",
 					"transactions" : [

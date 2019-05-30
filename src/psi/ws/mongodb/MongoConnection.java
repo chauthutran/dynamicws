@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import psi.ws.action.request.DateTimeRecord;
 import psi.ws.configuration.Configuration;
 import psi.ws.configuration.MongodbConfiguration;
 import psi.ws.exception.ActionException;
@@ -102,6 +103,10 @@ public class MongoConnection
     
     public JSONArray get( JSONArray conditions )
     {
+        JSONObject dtRecord_actionJson = new JSONObject();
+        DateTimeRecord dtRecord_Overall = new DateTimeRecord( "GETTING" );
+        
+        
         JSONArray list = new JSONArray();
         
         BasicDBObject andQuery = new BasicDBObject();
@@ -116,79 +121,26 @@ public class MongoConnection
             obj.add( new BasicDBObject( key, new BasicDBObject("$" + operator, value ) ) );
         }
         
-        
         andQuery.put("$and", obj);
+
         
-//        System.out.println(andQuery.toString());
+        DateTimeRecord dtRecord_t2 = new DateTimeRecord( "FIND DATA" );
         
-        DBCursor cursor = this.dbCollection.find( andQuery );           
+        DBCursor cursor = this.dbCollection.find( andQuery );  
+        dtRecord_t2.addTimeMark_WtCount( dtRecord_actionJson ); 
+        
+
+        DateTimeRecord dtRecord_t3 = new DateTimeRecord( "Loop data" );
         while(cursor.hasNext()){
            String result = cursor.next().toString();
-//           JSONObject output = new JSONObject(JSON.serialize(result));
            list.put( new JSONObject( result ) );
         }
         
+        dtRecord_t3.addTimeMark_WtCount( dtRecord_actionJson );
+        
+        dtRecord_Overall.addTimeMark_WtCount( dtRecord_actionJson ); 
+        System.out.println("\n\n\n--- GET " + dtRecord_actionJson.toString() );
         return list;
-        
-//        List<Bson> filters = new ArrayList<Bson>();
-//        for( int i = 0; i < conditions.length(); i++ )
-//        {
-//            JSONObject condition = conditions.getJSONObject( i );
-//            String key = condition.getString( "key" );
-//            String value = condition.getString( "value" );
-//            String operator = condition.getString( "operator" );
-//            
-//            Bson filter = makeFilter( key, value, operator );
-//            filters.add( filter );
-//        }
-//        
-//        
-//        
-//        AggregateIterable<Document> aggregate = this.collection.aggregate( filters );
-//
-//        List<JSONObject> list = new ArrayList<JSONObject>();
-//        MongoCursor<Document> iterator = aggregate.iterator();
-//        while (iterator.hasNext()) {
-//            String data = iterator.next().toJson();
-//            list.add( new JSONObject( data ) );
-//        }
-//        
-//        return list;
-        
-        
-//        JSONArray list = new JSONArray();
-//        
-//        if( conditions.length() > 1 )
-//        {
-//            List<BasicDBObject> searchArguments = new ArrayList<BasicDBObject>();
-//            
-//            for( int i = 0; i < conditions.length(); i++ )
-//            {
-//                JSONObject condition = conditions.getJSONObject( i );
-//                
-//                
-//                String key = condition.getString( "key" );
-//                String value = condition.getString( "value" );
-//                String operator = condition.getString( "operator" );
-//
-//                searchArguments.add(new BasicDBObject( key ,new BasicDBObject( "$" + operator, value )));
-//             }
-//
-//            BasicDBObject searchObject = new BasicDBObject();
-//            searchObject.put("$and", searchArguments);
-//            DBCursor logicalQueryResults = this.dbCollection.find( searchObject );           
-//            while(logicalQueryResults.hasNext()){
-//                 String result = logicalQueryResults.next().toString();
-////                 JSONObject output = new JSONObject(JSON.serialize(result));
-//                 list.put( new JSONObject( result ) );
-//            }
-//        }
-//        else if( conditions.length() > 1 )
-//        {
-//            
-//        }
-//        
-//        return list;
     }
     
     // -------------------------------------------------------------------------
