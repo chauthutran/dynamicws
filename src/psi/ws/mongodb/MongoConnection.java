@@ -19,7 +19,9 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
+import com.mongodb.QueryBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -103,8 +105,8 @@ public class MongoConnection
     
     public JSONArray get( JSONArray conditions )
     {
-        JSONObject dtRecord_actionJson = new JSONObject();
-        DateTimeRecord dtRecord_Overall = new DateTimeRecord( "GETTING" );
+ JSONObject dtRecord_actionJson = new JSONObject();
+ DateTimeRecord dtRecord_Overall = new DateTimeRecord( "GETTING" );
         
         
         JSONArray list = new JSONArray();
@@ -120,26 +122,20 @@ public class MongoConnection
           
             obj.add( new BasicDBObject( key, new BasicDBObject("$" + operator, value ) ) );
         }
-        
         andQuery.put("$and", obj);
 
-        
-        DateTimeRecord dtRecord_t2 = new DateTimeRecord( "FIND DATA" );
-        
         DBCursor cursor = this.dbCollection.find( andQuery );  
-        dtRecord_t2.addTimeMark_WtCount( dtRecord_actionJson ); 
-        
-
-        DateTimeRecord dtRecord_t3 = new DateTimeRecord( "Loop data" );
+ System.out.println("\n\n 1 ");       
+DateTimeRecord dtRecord_t3 = new DateTimeRecord( "Loop data" );
         while(cursor.hasNext()){
            String result = cursor.next().toString();
            list.put( new JSONObject( result ) );
         }
         
-        dtRecord_t3.addTimeMark_WtCount( dtRecord_actionJson );
+dtRecord_t3.addTimeMark_WtCount( dtRecord_actionJson );
         
-        dtRecord_Overall.addTimeMark_WtCount( dtRecord_actionJson ); 
-        System.out.println("\n\n\n--- GET " + dtRecord_actionJson.toString() );
+dtRecord_Overall.addTimeMark_WtCount( dtRecord_actionJson ); 
+System.out.println("\n\n\n--- GET " + dtRecord_actionJson.toString() );
         return list;
     }
     
@@ -149,9 +145,12 @@ public class MongoConnection
 
     private MongoClientURI getURI()
     {
+        MongoClientOptions.Builder options = MongoClientOptions.builder()
+            .maxConnectionLifeTime((30 * 1000));
+        
         return new MongoClientURI( "mongodb+srv://" + this.configuration.getUsername() + ":"
             + this.configuration.getPassword() + "@" + this.configuration.getClusterUrl() + "/"
-            + this.configuration.getDbName() + "?retryWrites=true" );
+            + this.configuration.getDbName() + "?retryWrites=true", options );
     }
     
     private Bson makeFilter( String property, String value, String operator )
