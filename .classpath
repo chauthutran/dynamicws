@@ -18,18 +18,14 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-20140107.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-path-2.0.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/cthut/Documents/GitHub/dynamicws/libs/json-smart-2.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/mongo-java-driver-3.9.1.jar"/>
 	<classpathentry kind="lib" path="libs/org.apache.commons.io.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-simple-1.7.25.jar"/>
 	<classpathentry kind="lib" path="libs/asm-1.0.2.jar"/>
-	<classpathentry kind="lib" path="/eReferrals/twilio-7.9.1-jar-with-dependencies.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="libs/json-20140107.jar"/>
+	<classpathentry kind="lib" path="libs/json-path-2.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/json-smart-2.1.1.jar"/>
+	<classpathentry kind="lib" path="libs/twilio-7.9.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
