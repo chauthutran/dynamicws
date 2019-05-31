@@ -5,553 +5,102 @@
 <title>Insert title here</title>
 </head>
 <script src="js/util.js" type="text/javascript"></script>
+<head>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.0.min.js"></script>
+</head>
+
 
 <body>
 
 <script>
-var GetVoucher = {
-    "attributes": [
-        {
-            "lastUpdated": "2019-01-29T00:03:51.849",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - VOUCHER - *Code",
-            "created": "2019-01-29T00:03:51.849",
-            "valueType": "TEXT",
-            "attribute": "RJO3VHQVIvh",
-            "value": "53343511"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.880",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Consent to service-related calls/texts",
-            "created": "2019-01-29T00:03:51.880",
-            "valueType": "TEXT",
-            "attribute": "OdKxvdYZXMU",
-            "value": "YESP"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:07:54.480",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Service provided",
-            "created": "2019-01-29T00:07:54.480",
-            "valueType": "TEXT",
-            "attribute": "c36k1IzeUu2",
-            "value": "PIL"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.858",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - VOUCHER - *Type (Electronic/Paper)",
-            "created": "2019-01-29T00:03:51.858",
-            "valueType": "TEXT",
-            "attribute": "SWfQZGMnQ5I",
-            "value": "Electronic"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.876",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - #Phone number",
-            "created": "2019-01-29T00:03:51.876",
-            "valueType": "PHONE_NUMBER",
-            "attribute": "uwjJhJ6kjN6",
-            "value": "+258848373666"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.854",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - VOUCHER - *Program",
-            "created": "2019-01-29T00:03:51.854",
-            "valueType": "TEXT",
-            "attribute": "Hq7B5uDZRwi",
-            "value": "FPL"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.890",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - VOUCHER - *Client ID",
-            "created": "2019-01-29T00:03:51.890",
-            "valueType": "TEXT",
-            "attribute": "L34MRrwU2g0",
-            "value": "LYSyIH8sAjZ"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:07:54.476",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Redemption Date",
-            "created": "2019-01-29T00:07:54.476",
-            "valueType": "TEXT",
-            "attribute": "ckpzWWCZVA9",
-            "value": "2019-01-29T00:07:53"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:07:54.472",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Provider Ouid",
-            "created": "2019-01-29T00:07:54.472",
-            "valueType": "TEXT",
-            "attribute": "sppc9VmDf7y",
-            "value": "OjtOqLnBy8P"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:07:54.467",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - FPL - *Last known method",
-            "created": "2019-01-29T00:07:54.467",
-            "valueType": "TEXT",
-            "attribute": "VVsw6EFkmiX",
-            "value": "PIL"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.885",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Issuing Date",
-            "created": "2019-01-29T00:03:51.885",
-            "valueType": "TEXT",
-            "attribute": "XBTcG9aXwak",
-            "value": "2019-01-01T15:51:52.000Z"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.863",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - VOUCHER - *Expiry date",
-            "created": "2019-01-29T00:03:51.863",
-            "valueType": "DATE",
-            "attribute": "Ky6tDzaFH1T",
-            "value": "2019-03-02"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:07:54.463",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - VOUCHER - *Status",
-            "created": "2019-01-29T00:03:51.867",
-            "valueType": "TEXT",
-            "attribute": "KRdnyGwNZyW",
-            "value": "RDX"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:51.872",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - #Full name",
-            "created": "2019-01-29T00:03:51.872",
-            "valueType": "TEXT",
-            "attribute": "kvX6wGkhagZ",
-            "value": "JpMZFirst J"
-        }
-    ],
-    "enrollments": [
-                    {
-                        "events": [
-                            {
-                                "dataValues": [
-                                    {
-                                        "lastUpdated": "2019-01-29T00:03:54.920",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:03:54.920",
-                                        "dataElement": "jjhgtSl7tlA",
-                                        "value": "ISS",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:03:54.920",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:03:54.920",
-                                        "dataElement": "cLuqhHgD7LV",
-                                        "value": "PIL",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:03:54.920",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:03:54.920",
-                                        "dataElement": "oYZjCqkj1wh",
-                                        "value": "10",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:03:54.920",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:03:54.920",
-                                        "dataElement": "MzjA6i3SfBZ",
-                                        "value": "version:1.1; source:RESTApi Test; configVersion(dcJson):; androidInfo:IMNE Number, Phone Number, Hash of the Android version app; csvVersion:; language:en",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:03:54.921",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:03:54.921",
-                                        "dataElement": "Hi5gBfyA11C",
-                                        "value": "0",
-                                        "providedElsewhere": false
-                                    }
-                                ],
-                                "storedBy": "cws.app.10",
-                                "notes": [],
-                                "attributeCategoryOptions": "gnS5549wCkG",
-                                "dueDate": "2019-01-29T00:03:54.856",
-                                "createdAtClient": "2019-01-29T00:03:54.899",
-                                "program": "PIYbqsRwTBx",
-                                "lastUpdated": "2019-01-29T00:03:54.919",
-                                "relationships": [],
-                                "event": "yBIZ3uh77Et",
-                                "programStage": "m0Btps6lG5R",
-                                "coordinate": {
-                                    "latitude": -17.819366,
-                                    "longitude": 31.060796
-                                },
-                                "created": "2019-01-29T00:03:54.899",
-                                "orgUnit": "ZUF1vSkQaB0",
-                                "trackedEntityInstance": "xHX7zrMcRTM",
-                                "enrollment": "t46GLrPztLb",
-                                "followup": false,
-                                "deleted": false,
-                                "enrollmentStatus": "ACTIVE",
-                                "attributeOptionCombo": "XfXL6fEveof",
-                                "geometry": {
-                                    "coordinates": [
-                                        31.060796,
-                                        -17.819366
-                                    ],
-                                    "type": "Point"
-                                },
-                                "status": "ACTIVE",
-                                "orgUnitName": "eRef IPC 8004 [TESTOU]",
-                                "lastUpdatedAtClient": "2019-01-29T00:03:54.919",
-                                "eventDate": "2019-01-01T15:51:52.000"
-                            },
-                            {
-                                "dataValues": [
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:57.319",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:57.319",
-                                        "dataElement": "jjhgtSl7tlA",
-                                        "value": "RDI",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:57.319",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:57.319",
-                                        "dataElement": "R6G86XT0BVu",
-                                        "value": "PIL",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:57.319",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:57.319",
-                                        "dataElement": "MzjA6i3SfBZ",
-                                        "value": "WebApp v1.17, Nov 23 / 2018",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:57.319",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:57.319",
-                                        "dataElement": "oYZjCqkj1wh",
-                                        "value": "30",
-                                        "providedElsewhere": false
-                                    }
-                                ],
-                                "storedBy": "cws.app.10",
-                                "notes": [],
-                                "attributeCategoryOptions": "gnS5549wCkG",
-                                "dueDate": "2019-01-29T00:07:57.252",
-                                "createdAtClient": "2019-01-29T00:07:57.297",
-                                "program": "PIYbqsRwTBx",
-                                "lastUpdated": "2019-01-29T00:07:57.318",
-                                "relationships": [],
-                                "event": "JX7e2RLojs1",
-                                "programStage": "m0Btps6lG5R",
-                                "coordinate": {
-                                    "latitude": 35.1675888,
-                                    "longitude": 128.977231
-                                },
-                                "created": "2019-01-29T00:07:57.297",
-                                "orgUnit": "ZUF1vSkQaB0",
-                                "trackedEntityInstance": "xHX7zrMcRTM",
-                                "enrollment": "t46GLrPztLb",
-                                "followup": false,
-                                "deleted": false,
-                                "enrollmentStatus": "ACTIVE",
-                                "attributeOptionCombo": "XfXL6fEveof",
-                                "geometry": {
-                                    "coordinates": [
-                                        128.977231,
-                                        35.1675888
-                                    ],
-                                    "type": "Point"
-                                },
-                                "status": "ACTIVE",
-                                "orgUnitName": "eRef IPC 8004 [TESTOU]",
-                                "lastUpdatedAtClient": "2019-01-29T00:07:57.318",
-                                "eventDate": "2019-01-29T00:07:56.000"
-                            },
-                            {
-                                "dataValues": [
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:58.264",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:58.264",
-                                        "dataElement": "jjhgtSl7tlA",
-                                        "value": "RDP",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:58.264",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:58.264",
-                                        "dataElement": "R6G86XT0BVu",
-                                        "value": "PIL",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:58.264",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:58.264",
-                                        "dataElement": "MzjA6i3SfBZ",
-                                        "value": "WebApp v1.17, Nov 23 / 2018",
-                                        "providedElsewhere": false
-                                    },
-                                    {
-                                        "lastUpdated": "2019-01-29T00:07:58.264",
-                                        "storedBy": "cws.app.10",
-                                        "created": "2019-01-29T00:07:58.264",
-                                        "dataElement": "oYZjCqkj1wh",
-                                        "value": "5",
-                                        "providedElsewhere": false
-                                    }
-                                ],
-                                "storedBy": "cws.app.10",
-                                "notes": [],
-                                "attributeCategoryOptions": "gnS5549wCkG",
-                                "dueDate": "2019-01-29T00:07:58.199",
-                                "createdAtClient": "2019-01-29T00:07:58.243",
-                                "program": "PIYbqsRwTBx",
-                                "lastUpdated": "2019-01-29T00:07:58.263",
-                                "relationships": [],
-                                "event": "XpNw1a030ic",
-                                "programStage": "m0Btps6lG5R",
-                                "coordinate": {
-                                    "latitude": 35.1675888,
-                                    "longitude": 128.977231
-                                },
-                                "created": "2019-01-29T00:07:58.243",
-                                "orgUnit": "OjtOqLnBy8P",
-                                "trackedEntityInstance": "xHX7zrMcRTM",
-                                "enrollment": "t46GLrPztLb",
-                                "followup": false,
-                                "deleted": false,
-                                "enrollmentStatus": "ACTIVE",
-                                "attributeOptionCombo": "XfXL6fEveof",
-                                "geometry": {
-                                    "coordinates": [
-                                        128.977231,
-                                        35.1675888
-                                    ],
-                                    "type": "Point"
-                                },
-                                "status": "ACTIVE",
-                                "orgUnitName": "eRef Prov 1004 [TESTOU]",
-                                "lastUpdatedAtClient": "2019-01-29T00:07:58.263",
-                                "eventDate": "2019-01-29T00:07:57.000"
-                            }
-                        ]
-                    }
-                    ]
-};
+var dateTimeLoop = {};
 
-var GetClient = 
+var jsondata = { "payload" :
 {
-    "attributes": [
-        {
-            "lastUpdated": "2019-01-29T00:03:48.750",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Channel of referral",
-            "created": "2019-01-29T00:03:48.750",
-            "valueType": "TEXT",
-            "attribute": "K5PX96b7e5l",
-            "value": "HF"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.735",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Birth order",
-            "created": "2019-01-29T00:03:48.735",
-            "valueType": "INTEGER_ZERO_OR_POSITIVE",
-            "attribute": "sUu9QuzgS1Y",
-            "value": "2"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.731",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - #Last name",
-            "created": "2019-01-29T00:03:48.731",
-            "valueType": "TEXT",
-            "attribute": "RsvOTmR2DjO",
-            "value": "JpMZLast"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.742",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Consent to service-related calls/texts",
-            "created": "2019-01-29T00:03:48.742",
-            "valueType": "TEXT",
-            "attribute": "OdKxvdYZXMU",
-            "value": "YESP"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.730",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - #First name",
-            "created": "2019-01-29T00:03:48.730",
-            "valueType": "TEXT",
-            "attribute": "nR9d9xZ5TRJ",
-            "value": "JpMZFirst"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.736",
-            "storedBy": "cws.app.10",
-            "code": "Gender",
-            "displayName": "CORE - Gender",
-            "created": "2019-01-29T00:03:48.736",
-            "valueType": "TEXT",
-            "attribute": "JcGai6pHG1M",
-            "value": "F"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.745",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - MZ - *Household delivery",
-            "created": "2019-01-29T00:03:48.745",
-            "valueType": "TEXT",
-            "attribute": "wxAMVtMTUtp",
-            "value": "YES-Microlut"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.733",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *District of birth",
-            "created": "2019-01-29T00:03:48.733",
-            "valueType": "TEXT",
-            "attribute": "pL3gzBBWOhh",
-            "value": "MZ10"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.738",
-            "storedBy": "cws.app.10",
-            "code": "DOB",
-            "displayName": "CORE - Date of Birth",
-            "created": "2019-01-29T00:03:48.738",
-            "valueType": "DATE",
-            "attribute": "wSp6Q7QDMsk",
-            "value": "1991-01-01"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.740",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Phone ownership",
-            "created": "2019-01-29T00:03:48.740",
-            "valueType": "TEXT",
-            "attribute": "P01PEz2ikrY",
-            "value": "HER"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:07:49.310",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - *Consent to feedback calls/texts",
-            "created": "2019-01-29T00:07:49.310",
-            "valueType": "TEXT",
-            "attribute": "h0E5ky3fOQc",
-            "value": "NO"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.744",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - FPL - *Last known method",
-            "created": "2019-01-29T00:03:48.744",
-            "valueType": "TEXT",
-            "attribute": "VVsw6EFkmiX",
-            "value": "PIL"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.737",
-            "storedBy": "cws.app.10",
-            "displayName": "CORE - Age",
-            "created": "2019-01-29T00:03:48.737",
-            "valueType": "NUMBER",
-            "attribute": "JM9qqwDihBV",
-            "value": "28"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.741",
-            "storedBy": "cws.app.10",
-            "displayName": "CwS - STD - #Phone number",
-            "created": "2019-01-29T00:03:48.741",
-            "valueType": "PHONE_NUMBER",
-            "attribute": "uwjJhJ6kjN6",
-            "value": "+258848373666"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:57.318",
-            "storedBy": "cws.app.10",
-            "displayName": "MZ - CBD - Next appointment",
-            "created": "2019-01-29T00:03:57.318",
-            "valueType": "TEXT",
-            "attribute": "U9pGdydNQB6",
-            "value": "Auto"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:48.728",
-            "storedBy": "cws.app.10",
-            "code": "CIC",
-            "displayName": "CORE - Client ID (CIC) [not-unique]",
-            "created": "2019-01-29T00:03:48.728",
-            "valueType": "TEXT",
-            "attribute": "rw3W9pDCPb2",
-            "value": "91Jpst10F2"
-        },
-        {
-            "lastUpdated": "2019-01-29T00:03:57.317",
-            "storedBy": "cws.app.10",
-            "displayName": "MZ - CBD - Enrollment channel",
-            "created": "2019-01-29T00:03:57.317",
-            "valueType": "TEXT",
-            "attribute": "vrSq96MYuU4",
-            "value": "IPC"
-        }
-    ]
+	"conditions": [
+	    {
+			"key" : "ipcOrgUnitId", "value" : "ZUF1vSkQaB0", "operator" : "eq"
+		},
+		{
+			"key" : "transactions.type", "value" : "voucher", "operator" : "eq"
+		},
+		{
+			"key" : "transactions.currentStatus", "value" : "ISS", "operator" : "eq"
+		},
+		
+		{
+			"key" : "transactions.dateTime", "value" : "2019-04-26", "operator" : "gt"
+		}
+       
+
+	]
+},
+	"config": {
+		"username": "tranchau",
+		"password": "Test1234",
+		"cluster": "clusterjames2-uvudw.mongodb.net",
+		"dbName": "db1",
+		"collectionName": "table1"
+	}
 };
 
 
-var mongoData = {}; mongoData.clientDetails = {};
-mongoData.transactions = [];
-var attributes = GetClient.attributes;
-mongoData.clientDetails.firstName = Util.findItemFromList ( attributes, "attribute", "nR9d9xZ5TRJ" ).value; mongoData.clientDetails.lastName = Util.findItemFromList ( attributes, "attribute", "RsvOTmR2DjO" ).value;
-mongoData.clientDetails.phoneNumber = Util.findItemFromList( attributes, "attribute", "uwjJhJ6kjN6" ).value; mongoData.clientDetails.gender = Util.findItemFromList( attributes, "attribute", "JcGai6pHG1M" ).value; mongoData.clientDetails.phoneOwnership = Util.findItemFromList( attributes, "attribute", "P01PEz2ikrY" ).value; mongoData.clientDetails.enrollmentChannel = Util.findItemFromList( attributes, "attribute", "K5PX96b7e5l" ).value; mongoData.clientDetails.birthDate = Util.findItemFromList( attributes, "attribute", "sUu9QuzgS1Y" ).value; mongoData.clientDetails.clientId = Util.findItemFromList( attributes, "attribute", "rw3W9pDCPb2" ).value; attributes = GetVoucher.attributes;
-var voucherEnrollments = GetVoucher.enrollments;
-for( var j in voucherEnrollments ) 
-{ 
-	 var transaction = {};
-	 transaction.dateTime = Util.findItemFromList( attributes, "attribute", "KRdnyGwNZyW" ).lastUpdated;
-	 transaction.type = "voucher";
-	 transaction.currentStatus = Util.findItemFromList( attributes, "attribute", "KRdnyGwNZyW" ).value;
-	 transaction.value = Util.findItemFromList( attributes, "attribute", "RJO3VHQVIvh" ).value;
-	   transaction.statusHistory = [];
-	 var voucherEvents = GetVoucher.enrollments[j].events;
-	 for( var i=0;i<voucherEvents.length; i++ )
-	 { 
-	    var history = {};
-		var event = voucherEvents[i]; 
-		history.idx = i; 
-		history.dateTime = event.eventDate; 
-		history.status = Util.findItemFromList ( event.dataValues, "dataElement", "jjhgtSl7tlA" ).value; 
-		transaction.statusHistory.push( JSON.stringify( history ) ); 
-	} 
-	mongoData.transactions.push( JSON.stringify( transaction ) ); 
+function runLoop()
+{
+	for( var i=0; i<10; i++ )
+	{
+		run(i);
+	}
+	
 }
+function run(idx) {
 
-console.log( mongoData );
+	dateTimeLoop[idx] = {
+			"start": new Date()
+	}
+	
+	$.ajax(
+			{
+				type: "POST"
+				,url: "http://localhost:8080/dynamicws/run/getMongoData"
+				,data: JSON.stringify(jsondata)
+	            ,contentType: "application/json;charset=utf-8"
+	           
+				,success: function( response ) 
+				{		
+					var endDate = new Date();
+					var startDate = dateTimeLoop[idx].start;
+					
+					
+					var d = (endDate - startDate); // Difference in milliseconds.
+					d = d/1000;
+					dateTimeLoop[idx] = {
+							"end": new Date(),
+							"time": d
+					}
+				}
+				,error: function(response)
+				{
+					var endDate = new Date();
+					var startDate = dateTimeLoop[idx].start;
+					
+					
+					var d = (endDate - startDate); // Difference in milliseconds.
+					d = d/1000;
+					dateTimeLoop[idx] = {
+							"end": new Date(),
+							"time": d
+					}
+					
+					console.log( dateTimeLoop[idx] ); 
+				}
+			});
+	
+	
+}
+	
+	runLoop();
+	
 </script>
 </body>
 </html>

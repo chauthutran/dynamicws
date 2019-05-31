@@ -26,8 +26,14 @@ public class ActionInput
     {
         super();
 
+        JSONObject payload = new JSONObject();
+        if( requestData != null && requestData.has( "payload" ) )
+        {
+            payload = requestData.getJSONObject( "payload" );
+        }
+        
         // Replace by request data
-        String resolvedInput = resolvedWithRequestData( inputStr, requestData );
+        String resolvedInput = resolvedWithRequestData( inputStr, payload );
         // Replace by data from action ( ActionOut data )
         resolvedInput = resolvedWithActionData( resolvedInput, actionList );
       
@@ -82,7 +88,7 @@ public class ActionInput
     {
         String resolvedInput = inputStr;
         
-        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, requestData.getJSONObject( "payload" ).toString() );
+        resolvedInput = resolvedInput.replaceAll( ActionInput.PARAMS_PAYLOAD, requestData.toString() );
         JSONArray parameters = Util.parseData( resolvedInput, ActionInput.REGEXP_REQUEST );
         for( int i = 0; i< parameters.length(); i++ )
         {   

@@ -1,7 +1,7 @@
 {
 	"ACCESS_SERVER_USERNAME": "test123",
 	"ACCESS_SERVER_PASSWORD": "AbCd1234@",
-	"ACCESS_SERVER_NAME": "https://latest.psi-mis.org",
+	"ACCESS_SERVER_NAME": "https://cws-dhis.psi-mis.org",
 	
 	"ACCESS_MONGODB_USERNAME": "tranchau",
 	"ACCESS_MONGODB_PASSWORD": "Test1234",
